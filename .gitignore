@@ -1,3 +1,3 @@
 .DS_Store
-*.jpynb
-.jpynb_checkpoints/*
+*.ipynb
+.ipynb_checkpoints/*
