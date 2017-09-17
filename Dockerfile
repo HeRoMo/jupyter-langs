@@ -7,8 +7,9 @@ ENV NOTEBOOK_DIR=/notebooks \
     MATPLOTLIBRC=/opt/juypter
 
 RUN apt-get update && \
-    apt-get upgrade
-#    apt-get install -y --no-install-recommends
+    apt-get upgrade && \
+    apt-get install -y --no-install-recommends \
+                    apt-utils
 RUN wget https://repo.continuum.io/archive/Anaconda3-4.4.0-Linux-x86_64.sh && \
     chmod 755 ./Anaconda3-4.4.0-Linux-x86_64.sh && \
     ./Anaconda3-4.4.0-Linux-x86_64.sh -b
