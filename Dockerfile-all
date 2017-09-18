@@ -2,6 +2,10 @@
 # VERSION 0.9.0
 FROM hero/jupyter-langs:zeromq
 
+# Install SPARQL
+RUN pip install sparqlkernel && \
+    jupyter sparqlkernel install
+
 # Install R
 RUN conda install --quiet --yes \
           'r-base' \
