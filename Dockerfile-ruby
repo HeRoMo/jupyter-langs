@@ -1,8 +1,10 @@
+# jupyter-langs:ruby
+# VERSION 0.9.1
 FROM hero/jupyter-langs:latest
 
 MAINTAINER HeRoMo
 
-ENV RUBY_VERSION=2.4.2
+ENV HOME=/root RUBY_VERSION=2.4.2
 RUN echo "deb http://download.opensuse.org/repositories/network:/messaging:/zeromq:/release-stable/Debian_9.0/ ./" >> /etc/apt/sources.list && \
     wget https://download.opensuse.org/repositories/network:/messaging:/zeromq:/release-stable/Debian_9.0/Release.key -O- | apt-key add
 RUN apt-get update && \
@@ -10,21 +12,28 @@ RUN apt-get update && \
                     libtool \
                     libffi-dev \
                     libzmq3-dev \
-                    libczmq-dev
+                    libczmq-dev \
+                    gsl-bin \
+                    libgsl0-dev
 
 RUN git clone https://github.com/rbenv/rbenv.git $HOME/.rbenv && \
     mkdir -p $HOME/.rbenv/plugins && \
     git clone https://github.com/rbenv/ruby-build.git $HOME/.rbenv/plugins/ruby-build && \
     echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> $HOME/.bashrc && \
     echo 'eval "$(rbenv init -)"' >> $HOME/.bashrc
-RUN $HOME/.rbenv/bin/rbenv install $RUBY_VERSION && \
-    $HOME/.rbenv/bin/rbenv global $RUBY_VERSION
-RUN eval "$($HOME/.rbenv/bin/rbenv init -)"
-RUN $HOME/.rbenv/shims/gem install --no-ri --no-rdoc \
-                                   cztop \
-                                   sciruby \
-                                  #  sciruby-full \
-                                   iruby
-RUN $HOME/.rbenv/shims/iruby register --force
+ENV PATH=$HOME/.rbenv/bin:$HOME/.rbenv/shims:$PATH
+RUN rbenv install $RUBY_VERSION && \
+    rbenv global $RUBY_VERSION
+RUN eval "$(rbenv init -)"
+RUN LD_LIBRARY_PATH=/usr/local/lib \
+    gem install --no-ri --no-rdoc \
+                cztop \
+                sciruby \
+                daru \
+                nyaplot \
+                #sciruby-full \
+                bundler \
+                iruby
+RUN iruby register --force
 
 CMD ["jupyter", "lab", "--no-browser", "--ip=0.0.0.0", "--allow-root", "--notebook-dir=/notebooks"]
