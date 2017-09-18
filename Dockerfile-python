@@ -1,5 +1,5 @@
 # jupyter-langs:python
-# VERSION 0.9.0
+# VERSION 1.0.0
 FROM buildpack-deps:stretch
 
 MAINTAINER HeRoMo
@@ -33,7 +33,8 @@ RUN mkdir -p $NOTEBOOK_DIR && \
     mkdir -p $JUPYTER_DIR && \
     mkdir -p $MATPLOTLIBRC
 COPY conf/matplotlibrc $MATPLOTLIBRC/matplotlibrc
+COPY conf/jupyter_notebook_config.py $JUPYTER_DIR/jupyter_notebook_config.py
 
 EXPOSE 8888
 #CMD ["jupyter", "notebook", "--no-browser", "--ip=0.0.0.0", "--allow-root", "--notebook-dir=/mnt/notebooks"]
-CMD ["jupyter", "lab", "--no-browser", "--ip=0.0.0.0", "--allow-root", "--notebook-dir=/notebooks"]
+CMD ["jupyter", "lab", "--no-browser", "--ip=0.0.0.0", "--allow-root", "--notebook-dir=/notebooks", "--config=$JUPYTER_DIR/jupyter_notebook_config.py"]
