@@ -1,5 +1,5 @@
 # jupyter-langs:all
-# VERSION 1.0.0
+# VERSION 1.0.1
 FROM hero/jupyter-langs:zeromq
 
 # Install SPARQL
@@ -67,5 +67,3 @@ RUN LD_LIBRARY_PATH=/usr/local/lib \
                 bundler \
                 iruby
 RUN iruby register --force
-
-CMD ["jupyter", "lab", "--no-browser", "--ip=0.0.0.0", "--allow-root", "--notebook-dir=/notebooks"]

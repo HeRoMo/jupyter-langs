@@ -1,5 +1,5 @@
 # jupyter-langs:zeromq
-# VERSION 0.9.0
+# VERSION 1.0.0
 FROM hero/jupyter-langs:python
 
 MAINTAINER HeRoMo

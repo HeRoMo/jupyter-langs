@@ -1,5 +1,5 @@
 # jupyter-langs:r
-# VERSION 0.9.0
+# VERSION 1.0.0
 FROM hero/jupyter-langs:python
 
 MAINTAINER HeRoMo
@@ -22,5 +22,3 @@ RUN conda install --quiet --yes \
           'r-crayon' \
           'r-randomforest' && \
     conda clean -tipsy
-
-CMD ["jupyter", "lab", "--no-browser", "--ip=0.0.0.0", "--allow-root", "--notebook-dir=/notebooks"]
