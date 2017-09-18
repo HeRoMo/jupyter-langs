@@ -1,0 +1,30 @@
+FROM hero/jupyter-langs:latest
+
+MAINTAINER HeRoMo
+
+ENV HOME=/root NODE_VERSION=8.5.0
+WORKDIR $HOME
+RUN echo "deb http://download.opensuse.org/repositories/network:/messaging:/zeromq:/release-stable/Debian_9.0/ ./" >> /etc/apt/sources.list && \
+    wget https://download.opensuse.org/repositories/network:/messaging:/zeromq:/release-stable/Debian_9.0/Release.key -O- | apt-key add
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+                    libtool \
+                    libffi-dev \
+                    libzmq3-dev \
+                    libczmq-dev
+
+RUN git clone https://github.com/riywo/ndenv $HOME/.ndenv && \
+    mkdir -p $HOME/.ndenv/plugins && \
+    git clone https://github.com/riywo/node-build.git $HOME/.ndenv/plugins/node-build && \
+    git clone https://github.com/pine/ndenv-yarn-install.git $HOME/.ndenv/plugins/ndenv-yarn-install && \
+    echo 'export PATH="$HOME/.ndenv/bin:$PATH"' >> $HOME/.bashrc && \
+    echo 'eval "$(ndenv init -)"' >> $HOME/.bashrc
+ENV PATH=$HOME/.ndenv/bin:$HOME/.ndenv/shims:$PATH
+RUN ndenv install $NODE_VERSION && \
+    ndenv global $NODE_VERSION
+RUN eval "$(ndenv init -)" && \
+    yarn global add ijavascript jp-babel && \
+    ijsinstall && \
+    jp-babel-install
+
+CMD ["jupyter", "lab", "--no-browser", "--ip=0.0.0.0", "--allow-root", "--notebook-dir=/notebooks"]
