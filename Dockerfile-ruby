@@ -1,18 +1,12 @@
 # jupyter-langs:ruby
-# VERSION 0.9.1
-FROM hero/jupyter-langs:python
+# VERSION 0.9.2
+FROM hero/jupyter-langs:zeromq
 
 MAINTAINER HeRoMo
 
 ENV HOME=/root RUBY_VERSION=2.4.2
-RUN echo "deb http://download.opensuse.org/repositories/network:/messaging:/zeromq:/release-stable/Debian_9.0/ ./" >> /etc/apt/sources.list && \
-    wget https://download.opensuse.org/repositories/network:/messaging:/zeromq:/release-stable/Debian_9.0/Release.key -O- | apt-key add
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-                    libtool \
-                    libffi-dev \
-                    libzmq3-dev \
-                    libczmq-dev \
                     gsl-bin \
                     libgsl0-dev
 
