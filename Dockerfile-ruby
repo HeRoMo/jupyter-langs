@@ -1,6 +1,6 @@
 # jupyter-langs:ruby
 # VERSION 0.9.1
-FROM hero/jupyter-langs:latest
+FROM hero/jupyter-langs:python
 
 MAINTAINER HeRoMo
 

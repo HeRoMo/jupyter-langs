@@ -1,4 +1,4 @@
-FROM hero/jupyter-langs:latest
+FROM hero/jupyter-langs:python
 
 MAINTAINER HeRoMo
 
