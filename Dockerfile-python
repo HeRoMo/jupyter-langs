@@ -1,13 +1,13 @@
 # jupyter-langs:python
-# VERSION 1.0.0
+# VERSION 1.0.1
 FROM buildpack-deps:stretch
 
 MAINTAINER HeRoMo
 
 ENV HOME=/root \
     NOTEBOOK_DIR=/notebooks \
-    JUPYTER_DIR=/opt/juypter \
-    MATPLOTLIBRC=/opt/juypter
+    JUPYTER_DIR=/opt/jupyter \
+    MATPLOTLIBRC=/opt/jupyter
 
 # Install required packages
 RUN apt-get update && \
