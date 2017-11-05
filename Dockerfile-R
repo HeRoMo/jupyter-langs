@@ -1,5 +1,5 @@
 # jupyter-langs:r
-# VERSION 1.0.0
+# VERSION 1.2.0
 FROM hero/jupyter-langs:python
 
 MAINTAINER HeRoMo
@@ -20,5 +20,6 @@ RUN conda install --quiet --yes \
           'r-caret' \
           'r-rcurl' \
           'r-crayon' \
-          'r-randomforest' && \
-    conda clean -tipsy
+          'r-randomforest' \
+          'r-tensorflow' \
+    && conda clean -tipsy
