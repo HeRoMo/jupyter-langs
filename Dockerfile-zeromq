@@ -1,5 +1,5 @@
 # jupyter-langs:zeromq
-# VERSION 1.0.0
+# VERSION 1.2.0
 FROM hero/jupyter-langs:python
 
 MAINTAINER HeRoMo
@@ -11,4 +11,5 @@ RUN apt-get update && \
                     libtool \
                     libffi-dev \
                     libzmq3-dev \
-                    libczmq-dev
+                    libczmq-dev \
+    && rm -rf /var/lib/apt/lists/*
