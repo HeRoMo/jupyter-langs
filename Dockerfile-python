@@ -18,9 +18,10 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Anaconda and Jupyter
-RUN wget https://repo.continuum.io/archive/Anaconda3-4.4.0-Linux-x86_64.sh && \
-    chmod 755 ./Anaconda3-4.4.0-Linux-x86_64.sh && \
-    ./Anaconda3-4.4.0-Linux-x86_64.sh -b
+ENV CONDA_VERSION=5.0.1
+RUN wget https://repo.continuum.io/archive/Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh && \
+    chmod 755 ./Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh && \
+    ./Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh -b
 ENV PATH=$HOME/anaconda3/bin:$PATH
 RUN conda install -y jupyter notebook pandas bokeh matplotlib && \
     conda install -y -c conda-forge jupyterlab \
