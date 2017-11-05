@@ -24,9 +24,12 @@ RUN wget https://repo.continuum.io/archive/Anaconda3-${CONDA_VERSION}-Linux-x86_
     ./Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh -b
 ENV PATH=$HOME/anaconda3/bin:$PATH
 RUN conda install -y jupyter notebook pandas bokeh matplotlib && \
-    conda install -y -c conda-forge jupyterlab \
+    conda install -y -c conda-forge \
+                        jupyterlab \
+                        tensorflow \
                         jupyter_contrib_nbextensions && \
-    jupyter contrib nbextension install --user
+    jupyter contrib nbextension install --user \
+    && conda clean -tipsy
 
 RUN mkdir -p $NOTEBOOK_DIR && \
     mkdir -p $JUPYTER_DIR && \
