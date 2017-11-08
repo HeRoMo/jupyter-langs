@@ -1,5 +1,5 @@
 # jupyter-langs:python
-# VERSION 1.2.0
+# VERSION 1.3.0
 FROM buildpack-deps:stretch
 
 MAINTAINER HeRoMo
@@ -29,7 +29,8 @@ RUN conda install -y jupyter notebook pandas bokeh matplotlib && \
                         tensorflow \
                         jupyter_contrib_nbextensions && \
     jupyter contrib nbextension install --user \
-    && conda clean -tipsy
+    && conda clean -tipsy \
+    && pip install tflearn
 
 RUN mkdir -p $NOTEBOOK_DIR && \
     mkdir -p $JUPYTER_DIR && \
