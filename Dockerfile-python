@@ -18,12 +18,12 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Anaconda and Jupyter
-ENV CONDA_VERSION=5.0.1
+ENV CONDA_VERSION=2018.12
 RUN wget https://repo.continuum.io/archive/Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh && \
     chmod 755 ./Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh && \
     ./Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh -b
 ENV PATH=$HOME/anaconda3/bin:$PATH
-RUN conda install python=3.5
+RUN conda install python=3.7
 RUN conda install -y -c conda-forge  \
                   pandas \
                   scipy \
