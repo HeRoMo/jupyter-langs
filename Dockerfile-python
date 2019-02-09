@@ -1,5 +1,5 @@
 # jupyter-langs:python
-# VERSION 1.4.1
+# VERSION 1.4.2
 FROM buildpack-deps:stretch
 
 MAINTAINER HeRoMo
@@ -35,7 +35,7 @@ RUN conda install -y -c conda-forge  \
                   jupyterlab \
                   libiconv \
                   jupyter_contrib_nbextensions \
-    && conda clean -tipsy
+    && conda build purge-all
 RUN jupyter contrib nbextension install --user
 RUN pip install tflearn
 
