@@ -8,63 +8,68 @@ RUN pip install sparqlkernel && \
 
 # Install R
 RUN conda install --quiet --yes \
-          'r-base' \
-          'r-irkernel' \
-          'r-plyr' \
-          'r-devtools' \
-          'r-tidyverse' \
-          'r-shiny' \
-          'r-rmarkdown' \
-          'r-forecast' \
-          'r-rsqlite' \
-          'r-reshape2' \
-          'r-nycflights13' \
-          'r-caret' \
-          'r-rcurl' \
-          'r-crayon' \
-          'r-randomforest' \
-          'r-tensorflow' \
+            'r-base' \
+            'r-irkernel' \
+            'r-plyr' \
+            'r-devtools' \
+            'r-tidyverse' \
+            'r-shiny' \
+            'r-rmarkdown' \
+            'r-forecast' \
+            'r-rsqlite' \
+            'r-reshape2' \
+            'r-nycflights13' \
+            'r-caret' \
+            'r-rcurl' \
+            'r-crayon' \
+            'r-randomforest' \
+            'r-tensorflow' \
     && conda build purge-all
 
 # Install Javascript
-ENV NODE_VERSION=11.9.0
-RUN git clone https://github.com/riywo/ndenv $HOME/.ndenv && \
-    mkdir -p $HOME/.ndenv/plugins && \
-    git clone https://github.com/riywo/node-build.git $HOME/.ndenv/plugins/node-build && \
-    git clone https://github.com/pine/ndenv-yarn-install.git $HOME/.ndenv/plugins/ndenv-yarn-install && \
-    echo 'export PATH="$HOME/.ndenv/bin:$PATH"' >> $HOME/.bashrc && \
-    echo 'eval "$(ndenv init -)"' >> $HOME/.bashrc
-ENV PATH=$HOME/.ndenv/bin:$HOME/.ndenv/shims:$PATH
-RUN ndenv install $NODE_VERSION && \
-    ndenv global $NODE_VERSION
-RUN eval "$(ndenv init -)" && \
-    yarn global add ijavascript jp-babel && \
+RUN curl -sL https://deb.nodesource.com/setup_11.x | bash - && \
+    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list
+RUN apt-get update -qq && \
+    apt-get install -y --no-install-recommends \
+        yarn \
+        nodejs \
+    && rm -rf /var/lib/apt/lists/*
+RUN yarn global add ijavascript && \
     ijsinstall
+
+# Install anyenv
+ENV SHELL=/bin/bash
+RUN git clone https://github.com/anyenv/anyenv $HOME/.anyenv && \
+    echo 'export PATH="$HOME/.anyenv/bin:$PATH"' >> ~/.bashrc && \
+    echo 'eval "$(anyenv init -)"' >> $HOME/.bashrc && \
+    exec $SHELL -l
+ENV PATH="$HOME/.anyenv/bin:$PATH"
+RUN anyenv install --force-init
 
 # Install Ruby
 ENV RUBY_VERSION=2.6.1
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-                    gsl-bin \
-                    libgsl0-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN git clone https://github.com/rbenv/rbenv.git $HOME/.rbenv && \
-    mkdir -p $HOME/.rbenv/plugins && \
-    git clone https://github.com/rbenv/ruby-build.git $HOME/.rbenv/plugins/ruby-build && \
-    echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> $HOME/.bashrc && \
-    echo 'eval "$(rbenv init -)"' >> $HOME/.bashrc
-ENV PATH=$HOME/.rbenv/bin:$HOME/.rbenv/shims:$PATH
-RUN rbenv install $RUBY_VERSION && \
+RUN anyenv install rbenv && \
+    eval "$(anyenv init -)" && \
+    rbenv install ${RUBY_VERSION} && \
     rbenv global $RUBY_VERSION
-RUN eval "$(rbenv init -)"
-RUN LD_LIBRARY_PATH=/usr/local/lib \
+RUN eval "$(anyenv init -)" && \
     gem install --no-document \
                 cztop \
                 sciruby \
                 daru \
                 nyaplot \
-                #sciruby-full \
-                bundler \
-                iruby
-RUN iruby register --force
+                iruby \
+    && iruby register --force
+
+# golang Install
+ENV GO_VERSION=1.11.5 \
+    GOPATH=/go
+ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
+RUN wget -O go.tgz https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz && \
+    tar -C /usr/local -xzf go.tgz && \
+    rm go.tgz
+RUN go get -u github.com/gopherdata/gophernotes && \
+    mkdir -p $HOME/.local/share/jupyter/kernels/gophernotes && \
+    cp -r /go/src/github.com/gopherdata/gophernotes/kernel/* $HOME/.local/share/jupyter/kernels/gophernotes
+
