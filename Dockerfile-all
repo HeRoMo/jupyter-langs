@@ -35,8 +35,9 @@ RUN apt-get update -qq && \
         yarn \
         nodejs \
     && rm -rf /var/lib/apt/lists/*
-RUN yarn global add ijavascript && \
-    ijsinstall
+RUN yarn global add ijavascript itypescript && \
+    ijsinstall && \
+    its --ts-install=global
 
 # Install anyenv
 ENV SHELL=/bin/bash
