@@ -1,6 +1,6 @@
 # jupyter-langs:all
 # VERSION 1.4.0
-FROM hero/jupyter-langs:zeromq
+FROM hero/jupyter-langs:python
 LABEL   Maintainer="HeRoMo" \
         Description="Jupyter lab for various languages" \
         Version="2.0.0"
@@ -42,30 +42,6 @@ RUN yarn global add ijavascript itypescript && \
     ijsinstall && \
     its --ts-install=global
 
-# Install anyenv
-ENV SHELL=/bin/bash
-RUN git clone https://github.com/anyenv/anyenv $HOME/.anyenv && \
-    echo 'export PATH="$HOME/.anyenv/bin:$PATH"' >> ~/.bashrc && \
-    echo 'eval "$(anyenv init -)"' >> $HOME/.bashrc && \
-    exec $SHELL -l
-ENV PATH="$HOME/.anyenv/bin:$PATH"
-RUN anyenv install --force-init
-
-# Install Ruby
-ENV RUBY_VERSION=2.6.1
-RUN anyenv install rbenv && \
-    eval "$(anyenv init -)" && \
-    rbenv install ${RUBY_VERSION} && \
-    rbenv global $RUBY_VERSION
-RUN eval "$(anyenv init -)" && \
-    gem install --no-document \
-                cztop \
-                sciruby \
-                daru \
-                nyaplot \
-                iruby \
-    && iruby register --force
-
 # Install golang
 ENV GO_VERSION=1.11.5 \
     GOPATH=/go
@@ -103,6 +79,8 @@ RUN conda install 'openjdk>8.0.121' --quiet --yes \
     && conda build purge-all \
     && jupyter labextension install @jupyter-widgets/jupyterlab-manager \
     && jupyter labextension install beakerx-jupyterlab
+    # && rm -rf /root/anaconda3/share/jupyter/kernels/clojure \
+    # && rm -rf /root/anaconda3/share/jupyter/kernels/sql
 
 # Install Erlang and Elixir
 RUN wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb \
@@ -127,3 +105,16 @@ RUN git clone https://github.com/filmor/ierl.git ierl && \
     $HOME/.ierl/ierl.escript install elixir --user && \
     cd .. && \
     rm -rf ierl
+
+# Install anyenv
+ENV RUBY_VERSION=2.6.1 \
+    RUBY_HOME=/opt/ruby
+RUN git clone https://github.com/rbenv/ruby-build.git \
+    && PREFIX=/usr/local ./ruby-build/install.sh \
+    && mkdir -p ${RUBY_HOME} \
+    && ruby-build ${RUBY_VERSION} ${RUBY_HOME}/${RUBY_VERSION}
+ENV PATH=${RUBY_HOME}/${RUBY_VERSION}/bin:$PATH
+RUN gem install --no-document \
+                cztop \
+                iruby \
+    && iruby register --force
