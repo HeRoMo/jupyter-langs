@@ -34,16 +34,16 @@ RUN wget https://repo.continuum.io/archive/Anaconda3-${CONDA_VERSION}-Linux-x86_
 ENV PATH=$HOME/anaconda3/bin:$PATH
 RUN conda install python=3.7
 RUN conda install -y -c conda-forge  \
-                  pandas \
-                  scipy \
-                  bokeh \
-                  matplotlib \
-                  tensorflow \
-                  keras \
-                  jupyter \
-                  jupyterlab \
-                  libiconv \
-                  jupyter_contrib_nbextensions \
+                pandas \
+                scipy \
+                bokeh \
+                matplotlib \
+                tensorflow \
+                keras \
+                jupyter \
+                jupyterlab \
+                libiconv \
+                jupyter_contrib_nbextensions \
     && conda build purge-all
 RUN jupyter contrib nbextension install --user
 RUN pip install tflearn
