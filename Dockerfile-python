@@ -1,8 +1,9 @@
 # jupyter-langs:python
-# VERSION 1.4.2
 FROM buildpack-deps:stretch
 
-MAINTAINER HeRoMo
+LABEL   Maintainer="HeRoMo" \
+        Description="Jupyter lab for Python3" \
+        Version="2.0.0"
 
 ENV HOME=/root \
     NOTEBOOK_DIR=/notebooks \
