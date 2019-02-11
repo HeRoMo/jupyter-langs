@@ -14,8 +14,17 @@ RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
                     apt-utils \
+                    locales \
                     fonts-noto-cjk \
     && rm -rf /var/lib/apt/lists/*
+
+# Set Locale
+ENV LANG=ja_JP.UTF-8 \
+    LC_ALL=ja_JP.UTF-8
+RUN echo "LC_ALL=ja_JP.UTF-8" >> /etc/environment \
+    && echo "ja_JP.UTF-8 UTF-8" >> /etc/locale.gen \
+    && echo "LANG=ja_JP.UTF-8" > /etc/locale.conf \
+    && locale-gen ja_JP.UTF-8
 
 # Install Anaconda and Jupyter
 ENV CONDA_VERSION=2018.12
