@@ -10,12 +10,19 @@ ENV HOME=/root \
     MATPLOTLIBRC=/opt/jupyter
 
 # Install required packages
+RUN echo "deb http://download.opensuse.org/repositories/network:/messaging:/zeromq:/release-stable/Debian_9.0/ ./" >> /etc/apt/sources.list && \
+    wget https://download.opensuse.org/repositories/network:/messaging:/zeromq:/release-stable/Debian_9.0/Release.key -O- | apt-key add
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
                     apt-utils \
                     locales \
                     fonts-noto-cjk \
+                    # for ZeroMQ
+                    libtool \
+                    libffi-dev \
+                    libzmq3-dev \
+                    libczmq-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Set Locale
