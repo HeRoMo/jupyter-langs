@@ -4,9 +4,9 @@ Docker images of Jupyter Lab for various languages.
 
 ![Launcher](./doc/launcher.png)
 
-## Support Langurages
+## Support Languages
 
-|Langurages|Version|jupyter kernel|
+|Languages|Version|jupyter kernel|
 |---|--:|---|
 | Python|3.6.8|[IPython](https://ipython.org/)|
 | Elixir|1.8.1|[ierl](https://github.com/filmor/ierl)|
