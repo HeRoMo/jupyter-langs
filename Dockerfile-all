@@ -93,3 +93,10 @@ RUN set -eux; \
     rustc --version;
 RUN cargo install evcxr_jupyter && \
     evcxr_jupyter --install
+
+# Install Scala and JVM langs
+RUN conda install 'openjdk>8.0.121' --quiet --yes \
+    && conda install -y -c conda-forge ipywidgets beakerx \
+    && conda build purge-all \
+    && jupyter labextension install @jupyter-widgets/jupyterlab-manager \
+    && jupyter labextension install beakerx-jupyterlab
