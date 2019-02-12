@@ -1,4 +1,3 @@
 .DS_Store
-*.ipynb
-.ipynb_checkpoints/*
-notebooks/log/*
+.ipynb_checkpoints
+notebooks/log
