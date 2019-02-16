@@ -105,7 +105,7 @@ RUN git clone https://github.com/filmor/ierl.git ierl && \
     cd .. && \
     rm -rf ierl
 
-# Install anyenv
+# Install Ruby
 ENV RUBY_VERSION=2.6.1 \
     RUBY_HOME=/opt/ruby
 RUN git clone https://github.com/rbenv/ruby-build.git \
