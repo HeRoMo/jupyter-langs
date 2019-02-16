@@ -114,6 +114,7 @@ RUN git clone https://github.com/rbenv/ruby-build.git \
     && ruby-build ${RUBY_VERSION} ${RUBY_HOME}/${RUBY_VERSION}
 ENV PATH=${RUBY_HOME}/${RUBY_VERSION}/bin:$PATH
 RUN gem install --no-document \
+                benchmark_driver \
                 cztop \
                 iruby \
     && iruby register --force
