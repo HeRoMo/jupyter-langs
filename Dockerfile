@@ -1,8 +1,8 @@
-# jupyter-langs:all
+# jupyter-langs:latest
 FROM hero/jupyter-langs:python
 LABEL   Maintainer="HeRoMo" \
         Description="Jupyter lab for various languages" \
-        Version="2.0.0"
+        Version="2.1.0"
 
 # Install SPARQL
 RUN pip install sparqlkernel && \
@@ -39,10 +39,10 @@ RUN apt-get update -qq && \
     && rm -rf /var/lib/apt/lists/*
 RUN yarn global add ijavascript itypescript && \
     ijsinstall && \
-    its --ts-install=global
+    its --install=global
 
 # Install golang
-ENV GO_VERSION=1.11.5 \
+ENV GO_VERSION=1.12.1 \
     GOPATH=/go
 ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
 RUN wget -O go.tgz https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz && \
@@ -56,7 +56,7 @@ RUN go get -u github.com/gopherdata/gophernotes && \
 ENV RUSTUP_HOME=/usr/local/rustup \
     CARGO_HOME=/usr/local/cargo \
     PATH=/usr/local/cargo/bin:$PATH \
-    RUST_VERSION=1.32.0 \
+    RUST_VERSION=1.33.0 \
     rustupSha256='2d4ddf4e53915a23dda722608ed24e5c3f29ea1688da55aa4e98765fc6223f71'
 RUN set -eux; \
     url="https://static.rust-lang.org/rustup/archive/1.16.0/x86_64-unknown-linux-gnu/rustup-init"; \
@@ -106,7 +106,7 @@ RUN git clone https://github.com/filmor/ierl.git ierl && \
     rm -rf ierl
 
 # Install Ruby
-ENV RUBY_VERSION=2.6.1 \
+ENV RUBY_VERSION=2.6.2 \
     RUBY_HOME=/opt/ruby
 RUN git clone https://github.com/rbenv/ruby-build.git \
     && PREFIX=/usr/local ./ruby-build/install.sh \
