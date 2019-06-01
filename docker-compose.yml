@@ -1,4 +1,4 @@
-version: "2.2"
+version: "3"
 services:
   jupyter:
     image: 'hero/jupyter-langs:latest'
