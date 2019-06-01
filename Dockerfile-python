@@ -3,7 +3,7 @@ FROM buildpack-deps:stretch
 
 LABEL   Maintainer="HeRoMo" \
         Description="Jupyter lab for Python3" \
-        Version="2.0.0"
+        Version="2.2.0"
 
 ENV HOME=/root \
     NOTEBOOK_DIR=/notebooks \

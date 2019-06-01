@@ -2,7 +2,7 @@
 FROM hero/jupyter-langs:python
 LABEL   Maintainer="HeRoMo" \
         Description="Jupyter lab for various languages" \
-        Version="2.1.0"
+        Version="2.2.0"
 
 # Install SPARQL
 RUN pip install sparqlkernel && \
