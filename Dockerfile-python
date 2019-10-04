@@ -1,9 +1,9 @@
 # jupyter-langs:python
-FROM buildpack-deps:stretch
+FROM buildpack-deps:buster
 
 LABEL   Maintainer="HeRoMo" \
         Description="Jupyter lab for Python3" \
-        Version="2.2.0"
+        Version="3.0.0"
 
 ENV HOME=/root \
     NOTEBOOK_DIR=/notebooks \
@@ -11,12 +11,13 @@ ENV HOME=/root \
     MATPLOTLIBRC=/opt/jupyter
 
 # Install required packages
-RUN echo "deb http://download.opensuse.org/repositories/network:/messaging:/zeromq:/release-stable/Debian_9.0/ ./" >> /etc/apt/sources.list && \
-    wget https://download.opensuse.org/repositories/network:/messaging:/zeromq:/release-stable/Debian_9.0/Release.key -O- | apt-key add
+RUN echo "deb http://download.opensuse.org/repositories/network:/messaging:/zeromq:/release-stable/Debian_10/ ./" >> /etc/apt/sources.list && \
+    wget https://download.opensuse.org/repositories/network:/messaging:/zeromq:/release-stable/Debian_10/Release.key -O- | apt-key add
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
                     apt-utils \
+                    cmake \
                     locales \
                     fonts-noto-cjk \
                     # for ZeroMQ
@@ -35,7 +36,7 @@ RUN echo "LC_ALL=ja_JP.UTF-8" >> /etc/environment \
     && locale-gen ja_JP.UTF-8
 
 # Install Anaconda and Jupyter
-ENV CONDA_VERSION=2019.03
+ENV CONDA_VERSION=2019.07
 RUN wget https://repo.continuum.io/archive/Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh && \
     chmod 755 ./Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh && \
     ./Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh -b
