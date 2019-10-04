@@ -2,7 +2,7 @@
 FROM hero/jupyter-langs:python
 LABEL   Maintainer="HeRoMo" \
         Description="Jupyter lab for various languages" \
-        Version="2.2.0"
+        Version="3.0.0"
 
 # Install SPARQL
 RUN pip install sparqlkernel && \
@@ -42,7 +42,7 @@ RUN yarn global add ijavascript typescript itypescript @types/node && \
     its --install=global
 
 # Install golang
-ENV GO_VERSION=1.12.5 \
+ENV GO_VERSION=1.13.1 \
     GOPATH=/go
 ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
 RUN wget -O go.tgz https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz && \
@@ -56,10 +56,10 @@ RUN go get -u github.com/gopherdata/gophernotes && \
 ENV RUSTUP_HOME=/usr/local/rustup \
     CARGO_HOME=/usr/local/cargo \
     PATH=/usr/local/cargo/bin:$PATH \
-    RUST_VERSION=1.35.0 \
-    rustupSha256='2d4ddf4e53915a23dda722608ed24e5c3f29ea1688da55aa4e98765fc6223f71'
+    RUST_VERSION=1.38.0 \
+    rustupSha256='36285482ae5c255f2decfab27d32ba19465804cb3ddf5a23e6ff2a7b0f6e0250'
 RUN set -eux; \
-    url="https://static.rust-lang.org/rustup/archive/1.16.0/x86_64-unknown-linux-gnu/rustup-init"; \
+    url="https://static.rust-lang.org/rustup/archive/1.19.0/x86_64-unknown-linux-gnu/rustup-init"; \
     wget "$url"; \
     echo "${rustupSha256} *rustup-init" | sha256sum -c -; \
     chmod +x rustup-init; \
@@ -73,7 +73,7 @@ RUN cargo install evcxr_jupyter && \
     evcxr_jupyter --install
 
 # Install Scala and JVM langs
-RUN conda install 'openjdk>8.0.121' --quiet --yes \
+RUN conda install 'openjdk=8.0.152' --quiet --yes \
     && conda install -y -c conda-forge ipywidgets beakerx \
     && conda build purge-all \
     && jupyter labextension install @jupyter-widgets/jupyterlab-manager \
@@ -106,7 +106,7 @@ RUN git clone https://github.com/filmor/ierl.git ierl && \
     rm -rf ierl
 
 # Install Ruby
-ENV RUBY_VERSION=2.6.3 \
+ENV RUBY_VERSION=2.6.5 \
     RUBY_HOME=/opt/ruby
 RUN git clone https://github.com/rbenv/ruby-build.git \
     && PREFIX=/usr/local ./ruby-build/install.sh \
