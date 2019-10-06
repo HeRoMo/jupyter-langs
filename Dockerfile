@@ -1,8 +1,10 @@
 # jupyter-langs:latest
+FROM node:12.11-buster-slim as nodejs
+
 FROM hero/jupyter-langs:python
 LABEL   Maintainer="HeRoMo" \
         Description="Jupyter lab for various languages" \
-        Version="3.0.0"
+        Version="3.0.1"
 
 # Install SPARQL
 RUN pip install sparqlkernel && \
@@ -25,21 +27,31 @@ RUN conda install --quiet --yes \
             'r-rcurl' \
             'r-crayon' \
             'r-randomforest' \
-            'r-tensorflow' \
-    && conda build purge-all
+            'r-tensorflow'
 
-# Install Javascript
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
-    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
-    echo "deb https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list
-RUN apt-get update -qq && \
-    apt-get install -y --no-install-recommends \
-        yarn \
-        nodejs \
-    && rm -rf /var/lib/apt/lists/*
-RUN yarn global add ijavascript typescript itypescript @types/node && \
-    ijsinstall && \
-    its --install=global
+# Install Erlang and Elixir
+RUN wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb \
+    && dpkg -i erlang-solutions_1.0_all.deb \
+    && apt-get update -y \
+    && apt-get install  -y --no-install-recommends \
+        erlang \
+        elixir \
+    && rm -rf /var/lib/apt/lists/* \
+    && mix local.hex --force \
+    && mix local.rebar --force
+RUN git clone https://github.com/filmor/ierl.git ierl && \
+    cd ierl && \
+    mkdir $HOME/.ierl && \
+    mix deps.get && \
+    # Build lfe explicitly for now
+    (cd deps/lfe && ~/.mix/rebar3 compile) && \
+    env MIX_ENV=prod mix escript.build && \
+    cp ierl $HOME/.ierl/ierl.escript && \
+    chmod +x $HOME/.ierl/ierl.escript && \
+    $HOME/.ierl/ierl.escript install erlang --user && \
+    $HOME/.ierl/ierl.escript install elixir --user && \
+    cd .. && \
+    rm -rf ierl
 
 # Install golang
 ENV GO_VERSION=1.13.1 \
@@ -72,39 +84,6 @@ RUN set -eux; \
 RUN cargo install evcxr_jupyter && \
     evcxr_jupyter --install
 
-# Install Scala and JVM langs
-RUN conda install 'openjdk=8.0.152' --quiet --yes \
-    && conda install -y -c conda-forge ipywidgets beakerx \
-    && conda build purge-all \
-    && jupyter labextension install @jupyter-widgets/jupyterlab-manager \
-    && jupyter labextension install beakerx-jupyterlab \
-    && rm -rf /root/anaconda3/share/jupyter/kernels/clojure \
-    && rm -rf /root/anaconda3/share/jupyter/kernels/sql
-
-# Install Erlang and Elixir
-RUN wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb \
-    && dpkg -i erlang-solutions_1.0_all.deb \
-    && apt-get update -y \
-    && apt-get install  -y --no-install-recommends \
-        erlang \
-        elixir \
-    && rm -rf /var/lib/apt/lists/* \
-    && mix local.hex --force \
-    && mix local.rebar --force
-RUN git clone https://github.com/filmor/ierl.git ierl && \
-    cd ierl && \
-    mkdir $HOME/.ierl && \
-    mix deps.get && \
-    # Build lfe explicitly for now
-    (cd deps/lfe && ~/.mix/rebar3 compile) && \
-    env MIX_ENV=prod mix escript.build && \
-    cp ierl $HOME/.ierl/ierl.escript && \
-    chmod +x $HOME/.ierl/ierl.escript && \
-    $HOME/.ierl/ierl.escript install erlang --user && \
-    $HOME/.ierl/ierl.escript install elixir --user && \
-    cd .. && \
-    rm -rf ierl
-
 # Install Ruby
 ENV RUBY_VERSION=2.6.5 \
     RUBY_HOME=/opt/ruby
@@ -118,3 +97,28 @@ RUN gem install --no-document \
                 cztop \
                 iruby \
     && iruby register --force
+
+# Install Javascript
+ENV YARN_VERSION 1.17.3
+RUN mkdir -p /opt
+COPY --from=nodejs /opt/yarn-v${YARN_VERSION} /opt/yarn
+COPY --from=nodejs /usr/local/bin/node /usr/local/bin/
+COPY --from=nodejs /usr/local/lib/node_modules/ /usr/local/lib/node_modules/
+RUN ln -s /opt/yarn/bin/yarn /usr/local/bin/yarn \
+    && ln -s /opt/yarn/bin/yarn /usr/local/bin/yarnpkg \
+    && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
+    && ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
+    && ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npx
+RUN yarn global add ijavascript typescript itypescript @types/node && \
+    ijsinstall && \
+    its --install=global
+
+# Install Scala and JVM langs
+RUN conda install 'openjdk=8.0.152' --quiet --yes \
+    && conda install -y -c conda-forge ipywidgets beakerx \
+    && jupyter labextension install @jupyter-widgets/jupyterlab-manager \
+    && jupyter labextension install beakerx-jupyterlab \
+    && rm -rf /root/anaconda3/share/jupyter/kernels/clojure \
+    && rm -rf /root/anaconda3/share/jupyter/kernels/sql \
+    && conda build purge-all
+# ↑ conda build purge-all はまとめてここでやる
