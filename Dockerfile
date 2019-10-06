@@ -5,7 +5,7 @@ FROM node:12.11-buster-slim as nodejs
 FROM hero/jupyter-langs:python
 LABEL   Maintainer="HeRoMo" \
         Description="Jupyter lab for various languages" \
-        Version="3.0.1"
+        Version="3.1.0"
 
 # Install SPARQL
 RUN pip install sparqlkernel && \
