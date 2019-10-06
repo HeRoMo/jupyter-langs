@@ -1,4 +1,5 @@
 # jupyter-langs:latest
+FROM golang:1.13.1-buster as golang
 FROM node:12.11-buster-slim as nodejs
 
 FROM hero/jupyter-langs:python
@@ -29,6 +30,15 @@ RUN conda install --quiet --yes \
             'r-randomforest' \
             'r-tensorflow'
 
+# Install golang
+ENV GO_VERSION=1.13.1 \
+    GOPATH=/go
+ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
+COPY --from=golang /usr/local/go/ /usr/local/go/
+RUN go get -u github.com/gopherdata/gophernotes && \
+    mkdir -p $HOME/.local/share/jupyter/kernels/gophernotes && \
+    cp -r /go/src/github.com/gopherdata/gophernotes/kernel/* $HOME/.local/share/jupyter/kernels/gophernotes
+
 # Install Erlang and Elixir
 RUN wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb \
     && dpkg -i erlang-solutions_1.0_all.deb \
@@ -52,17 +62,6 @@ RUN git clone https://github.com/filmor/ierl.git ierl && \
     $HOME/.ierl/ierl.escript install elixir --user && \
     cd .. && \
     rm -rf ierl
-
-# Install golang
-ENV GO_VERSION=1.13.1 \
-    GOPATH=/go
-ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
-RUN wget -O go.tgz https://dl.google.com/go/go${GO_VERSION}.linux-amd64.tar.gz && \
-    tar -C /usr/local -xzf go.tgz && \
-    rm go.tgz
-RUN go get -u github.com/gopherdata/gophernotes && \
-    mkdir -p $HOME/.local/share/jupyter/kernels/gophernotes && \
-    cp -r /go/src/github.com/gopherdata/gophernotes/kernel/* $HOME/.local/share/jupyter/kernels/gophernotes
 
 # Install Rust 
 ENV RUSTUP_HOME=/usr/local/rustup \
