@@ -36,7 +36,7 @@ RUN echo "LC_ALL=ja_JP.UTF-8" >> /etc/environment \
     && locale-gen ja_JP.UTF-8
 
 # Install Anaconda and Jupyter
-ENV CONDA_VERSION=2019.07
+ENV CONDA_VERSION=2020.02
 RUN wget https://repo.continuum.io/archive/Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh && \
     chmod 755 ./Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh && \
     ./Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh -b
