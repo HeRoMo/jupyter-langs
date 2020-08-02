@@ -12,7 +12,7 @@ RUN pip install sparqlkernel && \
     jupyter sparqlkernel install
 
 # Install R
-RUN conda install --quiet --yes \
+RUN conda install --quiet --yes -c conda-forge \
             'r-base' \
             'r-irkernel' \
             'r-plyr' \
