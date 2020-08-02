@@ -36,13 +36,14 @@ RUN echo "LC_ALL=ja_JP.UTF-8" >> /etc/environment \
     && locale-gen ja_JP.UTF-8
 
 # Install Anaconda and Jupyter
-ENV CONDA_VERSION=2020.02
+ENV CONDA_VERSION=2020.07
 RUN wget https://repo.continuum.io/archive/Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh && \
     chmod 755 ./Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh && \
     ./Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh -b
 ENV PATH=$HOME/anaconda3/bin:$PATH
-RUN conda install python=3.8
+RUN conda update -c conda-forge --all
 RUN conda install -y -c conda-forge  \
+                python=3.7 \
                 pandas \
                 scipy \
                 bokeh \
