@@ -13,7 +13,7 @@ RUN pip install sparqlkernel && \
 
 # Install R
 RUN conda install --quiet --yes -c conda-forge \
-            'r-base' \
+            'r-base>=4.0.2' \
             'r-irkernel' \
             'r-plyr' \
             'r-devtools' \
