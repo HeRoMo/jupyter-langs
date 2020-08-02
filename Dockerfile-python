@@ -1,14 +1,14 @@
 # jupyter-langs:python
 FROM buildpack-deps:buster
 
-LABEL   Maintainer="HeRoMo" \
-        Description="Jupyter lab for Python3" \
-        Version="3.0.0"
+LABEL Maintainer="HeRoMo"
+LABEL Description="Jupyter lab for Python3"
+LABEL Version="3.2.0"
 
-ENV HOME=/root \
-    NOTEBOOK_DIR=/notebooks \
-    JUPYTER_DIR=/opt/jupyter \
-    MATPLOTLIBRC=/opt/jupyter
+ENV HOME=/root
+ENV NOTEBOOK_DIR=/notebooks
+ENV JUPYTER_DIR=/opt/jupyter
+ENV MATPLOTLIBRC=/opt/jupyter
 
 # Install required packages
 RUN echo "deb http://download.opensuse.org/repositories/network:/messaging:/zeromq:/release-stable/Debian_10/ ./" >> /etc/apt/sources.list && \
@@ -28,21 +28,22 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # Set Locale
-ENV LANG=ja_JP.UTF-8 \
-    LC_ALL=ja_JP.UTF-8
+ENV LANG=ja_JP.UTF-8
+ENV LC_ALL=ja_JP.UTF-8
 RUN echo "LC_ALL=ja_JP.UTF-8" >> /etc/environment \
     && echo "ja_JP.UTF-8 UTF-8" >> /etc/locale.gen \
     && echo "LANG=ja_JP.UTF-8" > /etc/locale.conf \
     && locale-gen ja_JP.UTF-8
 
 # Install Anaconda and Jupyter
-ENV CONDA_VERSION=2019.07
+ENV CONDA_VERSION=2020.07
 RUN wget https://repo.continuum.io/archive/Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh && \
     chmod 755 ./Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh && \
     ./Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh -b
 ENV PATH=$HOME/anaconda3/bin:$PATH
-RUN conda install python=3.7
+RUN conda update -c conda-forge --all
 RUN conda install -y -c conda-forge  \
+                python=3.7 \
                 pandas \
                 scipy \
                 bokeh \

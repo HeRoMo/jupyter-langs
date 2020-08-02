@@ -1,19 +1,19 @@
 # jupyter-langs:latest
-FROM golang:1.13.1-buster as golang
-FROM node:12.11-buster-slim as nodejs
+FROM golang:1.14.6-buster as golang
+FROM node:12.18-buster-slim as nodejs
 
 FROM hero/jupyter-langs:python
-LABEL   Maintainer="HeRoMo" \
-        Description="Jupyter lab for various languages" \
-        Version="3.1.0"
+LABEL Maintainer="HeRoMo"
+LABEL Description="Jupyter lab for various languages"
+LABEL Version="3.2.0"
 
 # Install SPARQL
 RUN pip install sparqlkernel && \
     jupyter sparqlkernel install
 
 # Install R
-RUN conda install --quiet --yes \
-            'r-base' \
+RUN conda install --quiet --yes -c conda-forge \
+            'r-base>=4.0.2' \
             'r-irkernel' \
             'r-plyr' \
             'r-devtools' \
@@ -31,8 +31,8 @@ RUN conda install --quiet --yes \
             'r-tensorflow'
 
 # Install golang
-ENV GO_VERSION=1.13.1 \
-    GOPATH=/go
+ENV GO_VERSION=1.14.6
+ENV GOPATH=/go
 ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
 COPY --from=golang /usr/local/go/ /usr/local/go/
 RUN go get -u github.com/gopherdata/gophernotes && \
@@ -64,13 +64,13 @@ RUN git clone https://github.com/filmor/ierl.git ierl && \
     rm -rf ierl
 
 # Install Rust 
-ENV RUSTUP_HOME=/usr/local/rustup \
-    CARGO_HOME=/usr/local/cargo \
-    PATH=/usr/local/cargo/bin:$PATH \
-    RUST_VERSION=1.38.0 \
-    rustupSha256='36285482ae5c255f2decfab27d32ba19465804cb3ddf5a23e6ff2a7b0f6e0250'
+ENV RUSTUP_HOME=/usr/local/rustup
+ENV CARGO_HOME=/usr/local/cargo
+ENV PATH=/usr/local/cargo/bin:$PATH
+ENV RUST_VERSION=1.45.0
+ENV rustupSha256='49c96f3f74be82f4752b8bffcf81961dea5e6e94ce1ccba94435f12e871c3bdb'
 RUN set -eux; \
-    url="https://static.rust-lang.org/rustup/archive/1.19.0/x86_64-unknown-linux-gnu/rustup-init"; \
+    url="https://static.rust-lang.org/rustup/archive/1.22.1/x86_64-unknown-linux-gnu/rustup-init"; \
     wget "$url"; \
     echo "${rustupSha256} *rustup-init" | sha256sum -c -; \
     chmod +x rustup-init; \
@@ -84,8 +84,8 @@ RUN cargo install evcxr_jupyter && \
     evcxr_jupyter --install
 
 # Install Ruby
-ENV RUBY_VERSION=2.6.5 \
-    RUBY_HOME=/opt/ruby
+ENV RUBY_VERSION=2.7.1
+ENV RUBY_HOME=/opt/ruby
 RUN git clone https://github.com/rbenv/ruby-build.git \
     && PREFIX=/usr/local ./ruby-build/install.sh \
     && mkdir -p ${RUBY_HOME} \
@@ -98,7 +98,7 @@ RUN gem install --no-document \
     && iruby register --force
 
 # Install Javascript
-ENV YARN_VERSION 1.17.3
+ENV YARN_VERSION 1.22.4
 RUN mkdir -p /opt
 COPY --from=nodejs /opt/yarn-v${YARN_VERSION} /opt/yarn
 COPY --from=nodejs /usr/local/bin/node /usr/local/bin/
@@ -113,10 +113,14 @@ RUN yarn global add ijavascript typescript itypescript @types/node && \
     its --install=global
 
 # Install Scala and JVM langs
-RUN conda install 'openjdk=8.0.152' --quiet --yes \
-    && conda install -y -c conda-forge ipywidgets beakerx \
-    && jupyter labextension install @jupyter-widgets/jupyterlab-manager \
-    && jupyter labextension install beakerx-jupyterlab \
+RUN conda install -y -c conda-forge \
+                    openjdk=8.0.192 \
+                    notebook>=5.7.6 \
+                    tornado>6 \
+                    ipywidgets>=7.5.1 \
+                    beakerx
+RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager \
+    # && jupyter labextension install beakerx-jupyterlab \
     && rm -rf /root/anaconda3/share/jupyter/kernels/clojure \
     && rm -rf /root/anaconda3/share/jupyter/kernels/sql \
     && conda build purge-all
