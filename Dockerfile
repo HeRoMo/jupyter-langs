@@ -5,7 +5,7 @@ FROM node:12.18-buster-slim as nodejs
 FROM hero/jupyter-langs:python
 LABEL Maintainer="HeRoMo"
 LABEL Description="Jupyter lab for various languages"
-LABEL Version="3.2.0"
+LABEL Version="4.0.0"
 
 # Install SPARQL
 RUN pip install sparqlkernel && \
@@ -40,9 +40,11 @@ RUN go get -u github.com/gopherdata/gophernotes && \
     cp -r /go/src/github.com/gopherdata/gophernotes/kernel/* $HOME/.local/share/jupyter/kernels/gophernotes
 
 # Install Erlang and Elixir
-RUN wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb \
+RUN apt-get update -y \
+    && apt-get install  -y --no-install-recommends \
+        gnupg \
+    && wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb \
     && dpkg -i erlang-solutions_1.0_all.deb \
-    && apt-get update -y \
     && apt-get install  -y --no-install-recommends \
         erlang \
         elixir \
@@ -80,12 +82,42 @@ RUN set -eux; \
     rustup --version; \
     cargo --version; \
     rustc --version;
-RUN cargo install evcxr_jupyter && \
-    evcxr_jupyter --install
+RUN apt-get update -y \
+    && apt-get install  -y --no-install-recommends \
+        build-essential \
+        cmake \
+    && cargo install evcxr_jupyter \
+    && evcxr_jupyter --install
 
 # Install Ruby
 ENV RUBY_VERSION=2.7.1
 ENV RUBY_HOME=/opt/ruby
+RUN apt-get update -y \
+    && apt-get install  -y --no-install-recommends \
+		bzip2 \
+		ca-certificates \
+		libffi-dev \
+		libgmp-dev \
+		libssl-dev \
+		libyaml-dev \
+		procps \
+		zlib1g-dev \
+        autoconf \
+		bison \
+		dpkg-dev \
+		gcc \
+		libbz2-dev \
+		libgdbm-compat-dev \
+		libgdbm-dev \
+		libglib2.0-dev \
+		libncurses-dev \
+		libreadline-dev \
+		libxml2-dev \
+		libxslt-dev \
+		make \
+		ruby \
+		wget \
+		xz-utils
 RUN git clone https://github.com/rbenv/ruby-build.git \
     && PREFIX=/usr/local ./ruby-build/install.sh \
     && mkdir -p ${RUBY_HOME} \
@@ -113,6 +145,18 @@ RUN yarn global add ijavascript typescript itypescript @types/node && \
     its --install=global
 
 # Install Scala and JVM langs
+RUN apt-get update -y \
+    && apt-get install -y --no-install-recommends \
+        apt-utils \
+        sudo \
+        curl \
+        unzip \
+        software-properties-common \
+        apt-transport-https \
+        git \
+        bzip2 \
+        wget \
+        locales
 RUN conda install -y -c conda-forge \
                     openjdk=8.0.192 \
                     notebook>=5.7.6 \
@@ -122,6 +166,9 @@ RUN conda install -y -c conda-forge \
 RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager \
     # && jupyter labextension install beakerx-jupyterlab \
     && rm -rf /root/anaconda3/share/jupyter/kernels/clojure \
-    && rm -rf /root/anaconda3/share/jupyter/kernels/sql \
-    && conda build purge-all
-# ↑ conda build purge-all はまとめてここでやる
+    && rm -rf /root/anaconda3/share/jupyter/kernels/sql
+
+# ↓ 削除系ははまとめてここでやる
+RUN conda build purge-all \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
