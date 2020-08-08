@@ -1,5 +1,6 @@
 # jupyter-langs:latest
 FROM golang:1.14.6-buster as golang
+FROM julia:1.5.0-buster as julia
 FROM node:12.18-buster-slim as nodejs
 
 FROM hero/jupyter-langs:python
@@ -38,6 +39,13 @@ RUN conda install --quiet --yes -c conda-forge \
             'unixodbc' \
             'r-tidymodels' \
             'r-e1071'
+
+# Install Julia
+ENV JULIA_PATH /usr/local/julia
+ENV PATH ${JULIA_PATH}/bin:$PATH
+COPY --from=julia ${JULIA_PATH} ${JULIA_PATH}
+RUN julia --version
+RUN julia -e 'using Pkg; Pkg.add("IJulia")'
 
 # Install golang
 ENV GO_VERSION=1.14.6
@@ -162,7 +170,7 @@ RUN curl -Lo coursier https://git.io/coursier-cli \
     && ./coursier launch --fork almond -- --install \
     && rm -f coursier
 
-# ↓ 削除系ははまとめてここでやる
+# ↓ 削除系ははまとめてここでやる    
 RUN conda build purge-all \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
