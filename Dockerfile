@@ -12,23 +12,32 @@ RUN pip install sparqlkernel && \
     jupyter sparqlkernel install
 
 # Install R
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    unixodbc \
+    unixodbc-dev \
+    r-cran-rodbc
 RUN conda install --quiet --yes -c conda-forge \
             'r-base>=4.0.2' \
-            'r-irkernel' \
-            'r-plyr' \
-            'r-devtools' \
-            'r-tidyverse' \
-            'r-shiny' \
-            'r-rmarkdown' \
-            'r-forecast' \
-            'r-rsqlite' \
-            'r-reshape2' \
-            'r-nycflights13' \
             'r-caret' \
-            'r-rcurl' \
             'r-crayon' \
+            'r-devtools' \
+            'r-forecast' \
+            'r-hexbin' \
+            'r-htmltools' \
+            'r-htmlwidgets' \
+            'r-irkernel' \
+            'r-nycflights13' \
             'r-randomforest' \
-            'r-tensorflow'
+            'r-rcurl' \
+            'r-rmarkdown' \
+            'r-rodbc' \
+            'r-rsqlite' \
+            'r-shiny' \
+            'r-tidyverse' \
+            'unixodbc' \
+            'r-tidymodels' \
+            'r-e1071'
 
 # Install golang
 ENV GO_VERSION=1.14.6
