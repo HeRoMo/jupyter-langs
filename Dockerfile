@@ -155,18 +155,6 @@ RUN yarn global add ijavascript typescript itypescript @types/node && \
     its --install=global
 
 # Install Scala and JVM langs
-RUN apt-get update -y \
-    && apt-get install -y --no-install-recommends \
-        apt-utils \
-        sudo \
-        curl \
-        unzip \
-        software-properties-common \
-        apt-transport-https \
-        git \
-        bzip2 \
-        wget \
-        locales
 RUN conda install -y -c conda-forge \
                     openjdk=8.0.192 \
                     notebook>=5.7.6 \
@@ -175,8 +163,8 @@ RUN conda install -y -c conda-forge \
                     beakerx
 RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager \
     # && jupyter labextension install beakerx-jupyterlab \
-    && rm -rf /root/anaconda3/share/jupyter/kernels/clojure \
-    && rm -rf /root/anaconda3/share/jupyter/kernels/sql
+    && rm -rf /opt/conda/share/jupyter/kernels/clojure \
+    && rm -rf /opt/conda/share/jupyter/kernels/sql
 
 # ↓ 削除系ははまとめてここでやる
 RUN conda build purge-all \
