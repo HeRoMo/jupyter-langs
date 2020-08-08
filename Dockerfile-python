@@ -35,7 +35,7 @@ RUN echo "LC_ALL=ja_JP.UTF-8" >> /etc/environment \
 # Install Jupyter
 RUN conda update -c conda-forge --all
 RUN conda install -y -c conda-forge  \
-                python=3.7 \
+                python=3.8 \
                 conda-build \
                 pandas \
                 scipy \
