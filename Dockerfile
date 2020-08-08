@@ -52,8 +52,9 @@ RUN go get -u github.com/gopherdata/gophernotes && \
 RUN apt-get update -y \
     && apt-get install  -y --no-install-recommends \
         gnupg \
-    && wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb \
-    && dpkg -i erlang-solutions_1.0_all.deb \
+    && wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb \
+    && dpkg -i erlang-solutions_2.0_all.deb \
+    && apt-get update -y \
     && apt-get install  -y --no-install-recommends \
         erlang \
         elixir \
