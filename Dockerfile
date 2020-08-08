@@ -161,10 +161,14 @@ RUN yarn global add ijavascript typescript itypescript @types/node && \
     ijsinstall && \
     its --install=global
 
+# Install JVM languages
+## Java
 RUN conda install --quiet --yes -c conda-forge \
             'scijava-jupyter-kernel'
+## Kotlin
 RUN conda install --quiet --yes -c jetbrains \
             'kotlin-jupyter-kernel'
+## Scala
 RUN curl -Lo coursier https://git.io/coursier-cli \
     && chmod +x coursier \
     && ./coursier launch --fork almond -- --install \
