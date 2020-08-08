@@ -1,5 +1,5 @@
 # jupyter-langs:python
-FROM continuumio/anaconda3:2020.07
+FROM continuumio/miniconda3:4.8.2
 
 LABEL Maintainer="HeRoMo"
 LABEL Description="Jupyter lab for Python3"
@@ -36,6 +36,7 @@ RUN echo "LC_ALL=ja_JP.UTF-8" >> /etc/environment \
 RUN conda update -c conda-forge --all
 RUN conda install -y -c conda-forge  \
                 python=3.7 \
+                conda-build \
                 pandas \
                 scipy \
                 bokeh \
