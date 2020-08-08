@@ -58,7 +58,6 @@ RUN apt-get update -y \
     && apt-get install  -y --no-install-recommends \
         erlang \
         elixir \
-    && rm -rf /var/lib/apt/lists/* \
     && mix local.hex --force \
     && mix local.rebar --force
 RUN git clone https://github.com/filmor/ierl.git ierl && \
@@ -154,17 +153,17 @@ RUN yarn global add ijavascript typescript itypescript @types/node && \
     ijsinstall && \
     its --install=global
 
-# Install Scala and JVM langs
-RUN conda install -y -c conda-forge \
-                    openjdk=8.0.192 \
-                    notebook>=5.7.6 \
-                    tornado>6 \
-                    ipywidgets>=7.5.1 \
-                    beakerx
-RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager \
-    # && jupyter labextension install beakerx-jupyterlab \
-    && rm -rf /opt/conda/share/jupyter/kernels/clojure \
-    && rm -rf /opt/conda/share/jupyter/kernels/sql
+# # Install Scala and JVM langs
+# RUN conda install -y -c conda-forge \
+#                     openjdk=8.0.192 \
+#                     notebook>=5.7.6 \
+#                     tornado>6 \
+#                     ipywidgets>=7.5.1 \
+#                     beakerx
+# RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager \
+#     # && jupyter labextension install beakerx-jupyterlab \
+#     && rm -rf /opt/conda/share/jupyter/kernels/clojure \
+#     && rm -rf /opt/conda/share/jupyter/kernels/sql
 
 # ↓ 削除系ははまとめてここでやる
 RUN conda build purge-all \
