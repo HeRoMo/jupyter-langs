@@ -1,7 +1,7 @@
 version: "3"
 services:
   jupyter:
-    image: hero/jupyter-langs:all
+    image: hero/jupyter-langs:latest
     volumes:
       - ./notebooks:/notebooks
     ports:
