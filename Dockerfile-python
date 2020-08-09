@@ -11,16 +11,19 @@ ENV JUPYTER_DIR=/opt/jupyter
 ENV MATPLOTLIBRC=/opt/jupyter
 
 # Install required packages
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends \
-                    locales \
-                    fonts-noto-cjk \
-                    # for ZeroMQ
-                    libtool \
-                    libffi-dev \
-                    libzmq3-dev \
-                    libczmq-dev \
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install -y --no-install-recommends \
+            build-essential \
+            cmake \
+            gnupg \
+            locales \
+            fonts-noto-cjk \
+            # for ZeroMQ
+            libtool \
+            libffi-dev \
+            libzmq3-dev \
+            libczmq-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -51,9 +54,9 @@ RUN conda install -y -c conda-forge  \
 RUN jupyter contrib nbextension install --user
 RUN pip install tflearn
 
-RUN mkdir -p $NOTEBOOK_DIR && \
-    mkdir -p $JUPYTER_DIR && \
-    mkdir -p $MATPLOTLIBRC
+RUN mkdir -p $NOTEBOOK_DIR \
+    && mkdir -p $JUPYTER_DIR \
+    && mkdir -p $MATPLOTLIBRC
 COPY conf/matplotlibrc $MATPLOTLIBRC/matplotlibrc
 COPY conf/jupyter_notebook_config.py $JUPYTER_DIR/jupyter_notebook_config.py
 

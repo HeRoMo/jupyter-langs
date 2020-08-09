@@ -52,15 +52,12 @@ ENV GO_VERSION=1.14.6
 ENV GOPATH=/go
 ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
 COPY --from=golang /usr/local/go/ /usr/local/go/
-RUN go get -u github.com/gopherdata/gophernotes && \
-    mkdir -p $HOME/.local/share/jupyter/kernels/gophernotes && \
-    cp -r /go/src/github.com/gopherdata/gophernotes/kernel/* $HOME/.local/share/jupyter/kernels/gophernotes
+RUN go get -u github.com/gopherdata/gophernotes \
+    && mkdir -p $HOME/.local/share/jupyter/kernels/gophernotes \
+    && cp -r /go/src/github.com/gopherdata/gophernotes/kernel/* $HOME/.local/share/jupyter/kernels/gophernotes
 
 # Install Erlang and Elixir
-RUN apt-get update -y \
-    && apt-get install  -y --no-install-recommends \
-        gnupg \
-    && wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb \
+RUN wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb \
     && dpkg -i erlang-solutions_2.0_all.deb \
     && apt-get update -y \
     && apt-get install  -y --no-install-recommends \
@@ -68,19 +65,19 @@ RUN apt-get update -y \
         elixir \
     && mix local.hex --force \
     && mix local.rebar --force
-RUN git clone https://github.com/filmor/ierl.git ierl && \
-    cd ierl && \
-    mkdir $HOME/.ierl && \
-    mix deps.get && \
+RUN git clone https://github.com/filmor/ierl.git ierl \
+    && cd ierl \
+    && mkdir $HOME/.ierl \
+    && mix deps.get \
     # Build lfe explicitly for now
-    (cd deps/lfe && ~/.mix/rebar3 compile) && \
-    env MIX_ENV=prod mix escript.build && \
-    cp ierl $HOME/.ierl/ierl.escript && \
-    chmod +x $HOME/.ierl/ierl.escript && \
-    $HOME/.ierl/ierl.escript install erlang --user && \
-    $HOME/.ierl/ierl.escript install elixir --user && \
-    cd .. && \
-    rm -rf ierl
+    && (cd deps/lfe && ~/.mix/rebar3 compile) \
+    && env MIX_ENV=prod mix escript.build \
+    && cp ierl $HOME/.ierl/ierl.escript \
+    && chmod +x $HOME/.ierl/ierl.escript \
+    && $HOME/.ierl/ierl.escript install erlang --user \
+    && $HOME/.ierl/ierl.escript install elixir --user \
+    && cd .. \
+    && rm -rf ierl
 
 # Install Rust 
 ENV RUSTUP_HOME=/usr/local/rustup
@@ -99,11 +96,7 @@ RUN set -eux; \
     rustup --version; \
     cargo --version; \
     rustc --version;
-RUN apt-get update -y \
-    && apt-get install  -y --no-install-recommends \
-        build-essential \
-        cmake \
-    && cargo install evcxr_jupyter \
+RUN cargo install evcxr_jupyter \
     && evcxr_jupyter --install
 
 # Install Ruby
@@ -157,9 +150,9 @@ RUN ln -s /opt/yarn/bin/yarn /usr/local/bin/yarn \
     && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
     && ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
     && ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npx
-RUN yarn global add ijavascript typescript itypescript @types/node && \
-    ijsinstall && \
-    its --install=global
+RUN yarn global add ijavascript typescript itypescript @types/node \
+    && ijsinstall \
+    && its --install=global
 
 # Install JVM languages
 ## Java
