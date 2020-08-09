@@ -1,9 +1,9 @@
 # jupyter-langs:python
-FROM buildpack-deps:buster
+FROM continuumio/miniconda3:4.8.2
 
 LABEL Maintainer="HeRoMo"
 LABEL Description="Jupyter lab for Python3"
-LABEL Version="3.2.0"
+LABEL Version="4.0.0"
 
 ENV HOME=/root
 ENV NOTEBOOK_DIR=/notebooks
@@ -11,20 +11,20 @@ ENV JUPYTER_DIR=/opt/jupyter
 ENV MATPLOTLIBRC=/opt/jupyter
 
 # Install required packages
-RUN echo "deb http://download.opensuse.org/repositories/network:/messaging:/zeromq:/release-stable/Debian_10/ ./" >> /etc/apt/sources.list && \
-    wget https://download.opensuse.org/repositories/network:/messaging:/zeromq:/release-stable/Debian_10/Release.key -O- | apt-key add
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends \
-                    apt-utils \
-                    cmake \
-                    locales \
-                    fonts-noto-cjk \
-                    # for ZeroMQ
-                    libtool \
-                    libffi-dev \
-                    libzmq3-dev \
-                    libczmq-dev \
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install -y --no-install-recommends \
+            build-essential \
+            cmake \
+            gnupg \
+            locales \
+            fonts-noto-cjk \
+            # for ZeroMQ
+            libtool \
+            libffi-dev \
+            libzmq3-dev \
+            libczmq-dev \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Set Locale
@@ -35,15 +35,11 @@ RUN echo "LC_ALL=ja_JP.UTF-8" >> /etc/environment \
     && echo "LANG=ja_JP.UTF-8" > /etc/locale.conf \
     && locale-gen ja_JP.UTF-8
 
-# Install Anaconda and Jupyter
-ENV CONDA_VERSION=2020.07
-RUN wget https://repo.continuum.io/archive/Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh && \
-    chmod 755 ./Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh && \
-    ./Anaconda3-${CONDA_VERSION}-Linux-x86_64.sh -b
-ENV PATH=$HOME/anaconda3/bin:$PATH
+# Install Jupyter
 RUN conda update -c conda-forge --all
 RUN conda install -y -c conda-forge  \
-                python=3.7 \
+                python=3.8 \
+                conda-build \
                 pandas \
                 scipy \
                 bokeh \
@@ -58,9 +54,9 @@ RUN conda install -y -c conda-forge  \
 RUN jupyter contrib nbextension install --user
 RUN pip install tflearn
 
-RUN mkdir -p $NOTEBOOK_DIR && \
-    mkdir -p $JUPYTER_DIR && \
-    mkdir -p $MATPLOTLIBRC
+RUN mkdir -p $NOTEBOOK_DIR \
+    && mkdir -p $JUPYTER_DIR \
+    && mkdir -p $MATPLOTLIBRC
 COPY conf/matplotlibrc $MATPLOTLIBRC/matplotlibrc
 COPY conf/jupyter_notebook_config.py $JUPYTER_DIR/jupyter_notebook_config.py
 
