@@ -1,12 +1,12 @@
 # jupyter-langs:latest
-FROM golang:1.14.6-buster as golang
+FROM golang:1.15.0-buster as golang
 FROM julia:1.5.0-buster as julia
 FROM node:12.18-buster-slim as nodejs
 
 FROM hero/jupyter-langs:python
 LABEL Maintainer="HeRoMo"
 LABEL Description="Jupyter lab for various languages"
-LABEL Version="4.0.0"
+LABEL Version="4.1.0"
 
 # Install SPARQL
 RUN pip install sparqlkernel && \
@@ -48,7 +48,7 @@ RUN julia --version
 RUN julia -e 'using Pkg; Pkg.add("IJulia")'
 
 # Install golang
-ENV GO_VERSION=1.14.6
+ENV GO_VERSION=1.15
 ENV GOPATH=/go
 ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
 COPY --from=golang /usr/local/go/ /usr/local/go/
@@ -83,7 +83,7 @@ RUN git clone https://github.com/filmor/ierl.git ierl \
 ENV RUSTUP_HOME=/usr/local/rustup
 ENV CARGO_HOME=/usr/local/cargo
 ENV PATH=/usr/local/cargo/bin:$PATH
-ENV RUST_VERSION=1.45.0
+ENV RUST_VERSION=1.45.2
 ENV rustupSha256='49c96f3f74be82f4752b8bffcf81961dea5e6e94ce1ccba94435f12e871c3bdb'
 RUN set -eux; \
     url="https://static.rust-lang.org/rustup/archive/1.22.1/x86_64-unknown-linux-gnu/rustup-init"; \
