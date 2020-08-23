@@ -1,12 +1,11 @@
 # jupyter-langs:latest
 FROM golang:1.15.0-buster as golang
 FROM julia:1.5.0-buster as julia
-FROM node:12.18-buster-slim as nodejs
 
 FROM hero/jupyter-langs:python
 LABEL Maintainer="HeRoMo"
 LABEL Description="Jupyter lab for various languages"
-LABEL Version="4.1.0"
+LABEL Version="5.0.0"
 
 # Install SPARQL
 RUN pip install sparqlkernel && \
@@ -38,7 +37,8 @@ RUN conda install --quiet --yes -c conda-forge \
             'r-tidyverse' \
             'unixodbc' \
             'r-tidymodels' \
-            'r-e1071'
+            'r-e1071' \
+            'r-plotly'
 
 # Install Julia
 ENV JULIA_PATH /usr/local/julia
@@ -139,21 +139,6 @@ RUN gem install --no-document \
                 iruby \
     && iruby register --force
 
-# Install Javascript
-ENV YARN_VERSION 1.22.4
-RUN mkdir -p /opt
-COPY --from=nodejs /opt/yarn-v${YARN_VERSION} /opt/yarn
-COPY --from=nodejs /usr/local/bin/node /usr/local/bin/
-COPY --from=nodejs /usr/local/lib/node_modules/ /usr/local/lib/node_modules/
-RUN ln -s /opt/yarn/bin/yarn /usr/local/bin/yarn \
-    && ln -s /opt/yarn/bin/yarn /usr/local/bin/yarnpkg \
-    && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
-    && ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
-    && ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npx
-RUN yarn global add ijavascript typescript itypescript @types/node \
-    && ijsinstall \
-    && its --install=global
-
 # Install JVM languages
 ## Java
 RUN conda install --quiet --yes -c conda-forge \
@@ -168,6 +153,6 @@ RUN curl -Lo coursier https://git.io/coursier-cli \
     && rm -f coursier
 
 # ↓ 削除系ははまとめてここでやる    
-RUN conda build purge-all \
+RUN conda clean --all \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
