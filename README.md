@@ -23,6 +23,8 @@ Docker images of Jupyter Lab for various languages.
 | Sparql||[SPARQL kernel](https://github.com/paulovn/sparql-kernel)|
 | Typescript| 3.9.0 | [ITypeScript](https://github.com/nearbydelta/itypescript)|
 
+* Enabled Plotly, Dash and leaflet in Python.
+
 ## Usage 
 
 ```bash
