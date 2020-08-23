@@ -37,8 +37,7 @@ RUN conda install --quiet --yes -c conda-forge \
             'r-tidyverse' \
             'unixodbc' \
             'r-tidymodels' \
-            'r-e1071' \
-            'r-plotly'
+            'r-e1071'
 
 # Install Julia
 ENV JULIA_PATH /usr/local/julia
