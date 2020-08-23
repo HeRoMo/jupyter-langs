@@ -194,6 +194,7 @@ backend      : Qt5Agg
 # 10 pt is the standard value.
 #
 #font.family         : sans-serif
+font.family         : Noto Sans CJK JP
 #font.style          : normal
 #font.variant        : normal
 #font.weight         : medium
