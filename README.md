@@ -18,7 +18,7 @@ Docker images of Jupyter Lab for various languages.
 | Kotlin|1.4.20|[jupyter\-kotlin](https://github.com/ligee/kotlin-jupyter)|
 | R |4.0.2|[IRKernel](http://irkernel.github.io/)|
 | Ruby| 2.7.1 |[IRuby](https://github.com/SciRuby/iruby)|
-| Rust |1.45.2|[EvCxR Jupyter Kernel](https://github.com/google/evcxr/tree/master/evcxr_jupyter)|
+| Rust |1.46.0|[EvCxR Jupyter Kernel](https://github.com/google/evcxr/tree/master/evcxr_jupyter)|
 | Scala |2.13.3|[almond](https://github.com/almond-sh/almond)|
 | Sparql||[SPARQL kernel](https://github.com/paulovn/sparql-kernel)|
 | Typescript| 3.9.0 | [ITypeScript](https://github.com/nearbydelta/itypescript)|
