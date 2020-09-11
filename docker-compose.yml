@@ -1,8 +1,11 @@
 version: "3"
 services:
   jupyter:
-    image: 'hero/jupyter-langs:latest'
+    image: hero/jupyter-langs:latest
     volumes:
       - ./notebooks:/notebooks
     ports:
-      - 8888:8888
+      - 8050:8050 # for Dash
+      - 8888:8888 # for Jupyterlab
+
+
