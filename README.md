@@ -14,7 +14,7 @@ Docker images of Jupyter Lab for various languages.
 | Go|1.15.0|[Gophernotes](https://github.com/gopherdata/gophernotes)|
 | Java |1.8.0_152|[SciJava Jupyter Kernel](https://github.com/hadim/scijava-jupyter-kernel)|
 | JavaScript(Node.js)|12.18.3|[IJavascript](https://github.com/n-riesco/ijavascript)|
-| Julia |1.5.0|[IJulia](https://github.com/JuliaLang/IJulia.jl)|
+| Julia |1.5.1|[IJulia](https://github.com/JuliaLang/IJulia.jl)|
 | Kotlin|1.4.20|[jupyter\-kotlin](https://github.com/ligee/kotlin-jupyter)|
 | R |4.0.2|[IRKernel](http://irkernel.github.io/)|
 | Ruby| 2.7.1 |[IRuby](https://github.com/SciRuby/iruby)|
