@@ -2,7 +2,7 @@
 FROM golang:1.15.0-buster as golang
 FROM julia:1.5.1-buster as julia
 
-FROM ghcr.io/heromo/jupyter-langs:python
+FROM ghcr.io/heromo/jupyter-langs/python:latest
 LABEL Maintainer="HeRoMo"
 LABEL Description="Jupyter lab for various languages"
 LABEL Version="5.2.0"
