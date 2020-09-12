@@ -7,5 +7,3 @@ services:
     ports:
       - 8050:8050 # for Dash
       - 8888:8888 # for Jupyterlab
-
-

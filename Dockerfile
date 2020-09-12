@@ -1,11 +1,11 @@
 # jupyter-langs:latest
 FROM golang:1.15.0-buster as golang
-FROM julia:1.5.0-buster as julia
+FROM julia:1.5.1-buster as julia
 
 FROM hero/jupyter-langs:python
 LABEL Maintainer="HeRoMo"
 LABEL Description="Jupyter lab for various languages"
-LABEL Version="5.1.0"
+LABEL Version="5.2.0"
 
 # Install SPARQL
 RUN pip install sparqlkernel && \
