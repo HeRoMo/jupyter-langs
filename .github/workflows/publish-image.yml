@@ -1,16 +1,12 @@
-name: Publish Python Docker image
+name: Publish Docker image
 on:
   # push:
   #   branches:
   #     - master
   #   paths:
-  #     - Dockerfile-python
-  #   tags:
-  #     - '[0-9]+.[0-9]+.[0-9]+'
+  #     - Dockerfile
   pull_request: # for debug
     types: [opened, synchronize]
-    paths:
-      - Dockerfile-python
 jobs:
   push_to_registry:
     name: Push Docker image to GitHub Container Registry
@@ -25,5 +21,5 @@ jobs:
           password: ${{ secrets.GHCR_TOKEN }}
           registry: ghcr.io
           repository: heromo/jupyter-langs
-          dockerfile: Dockerfile-python
-          tags: python
+          dockerfile: Dockerfile
+          tag_with_ref: true
