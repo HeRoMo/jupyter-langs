@@ -1,11 +1,11 @@
-FROM node:12.18-buster-slim as nodejs
+FROM node:12.19.0-buster-slim as nodejs
 
 # jupyter-langs:python
 FROM continuumio/miniconda3:4.8.2
 
 LABEL Maintainer="HeRoMo"
 LABEL Description="Jupyter lab for Python3 and Javascript"
-LABEL Version="5.0.0"
+LABEL Version="5.3.0"
 
 ENV HOME=/root
 ENV NOTEBOOK_DIR=/notebooks
@@ -71,7 +71,8 @@ COPY conf/matplotlibrc $MATPLOTLIBRC/matplotlibrc
 COPY conf/jupyter_notebook_config.py $JUPYTER_DIR/jupyter_notebook_config.py
 
 # Install Javascript
-ENV YARN_VERSION 1.22.4
+ENV NODE_VERSION 12.19.0
+ENV YARN_VERSION 1.22.5
 RUN mkdir -p /opt
 COPY --from=nodejs /opt/yarn-v${YARN_VERSION} /opt/yarn
 COPY --from=nodejs /usr/local/bin/node /usr/local/bin/
