@@ -1,4 +1,4 @@
-FROM node:12.19.0-buster-slim as nodejs
+FROM node:14.15.1-buster-slim as nodejs
 
 # jupyter-langs:python
 FROM continuumio/miniconda3:4.8.2
@@ -8,9 +8,11 @@ LABEL Description="Jupyter lab for Python3 and Javascript"
 LABEL Version="5.3.0"
 
 ENV HOME=/root
-ENV NOTEBOOK_DIR=/notebooks
+ENV NOTEBOOK_DIR=/jupyter/notebooks
 ENV JUPYTER_DIR=/opt/jupyter
 ENV MATPLOTLIBRC=/opt/jupyter
+
+WORKDIR /jupyter
 
 # Install required packages
 RUN apt-get update \
@@ -71,7 +73,7 @@ COPY conf/matplotlibrc $MATPLOTLIBRC/matplotlibrc
 COPY conf/jupyter_notebook_config.py $JUPYTER_DIR/jupyter_notebook_config.py
 
 # Install Javascript
-ENV NODE_VERSION 12.19.0
+ENV NODE_VERSION 14.15.1
 ENV YARN_VERSION 1.22.5
 RUN mkdir -p /opt
 COPY --from=nodejs /opt/yarn-v${YARN_VERSION} /opt/yarn
@@ -82,21 +84,22 @@ RUN ln -s /opt/yarn/bin/yarn /usr/local/bin/yarn \
     && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
     && ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
     && ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npx
-RUN yarn global add ijavascript typescript itypescript @types/node \
-    && ijsinstall \
-    && its --install=global
+RUN yarn global add typescript tslab \
+    && tslab install \
+    && yarn add @types/node
 
 # Install jupyter labextensions
 RUN jupyter labextension install \
             @jupyter-widgets/jupyterlab-manager \ 
+    && jupyter labextension install \
             plotlywidget \
             jupyterlab-plotly \
-            jupyter-leaflet \
-    && jupyter lab build
+            jupyter-leaflet --dev-build=False --minimize=False \
+    && jupyter lab build --dev-build=False --minimize=False
 
 # for JupyterLab
 EXPOSE 8888
 # for Dash
 EXPOSE 8050
 
-CMD ["jupyter", "lab", "--no-browser", "--ip=0.0.0.0", "--allow-root", "--notebook-dir=/notebooks", "--config=$JUPYTER_DIR/jupyter_notebook_config.py"]
+CMD ["jupyter", "lab", "--no-browser", "--ip=0.0.0.0", "--allow-root", "--notebook-dir=/jupyter/notebooks", "--config=$JUPYTER_DIR/jupyter_notebook_config.py"]
