@@ -91,11 +91,10 @@ RUN yarn global add typescript tslab \
 # Install jupyter labextensions
 RUN jupyter labextension install \
             @jupyter-widgets/jupyterlab-manager \ 
-    && jupyter labextension install \
             plotlywidget \
             jupyterlab-plotly \
-            jupyter-leaflet --dev-build=False --minimize=False \
-    && jupyter lab build --dev-build=False --minimize=False
+            jupyter-leaflet \
+    && jupyter lab build
 
 # for JupyterLab
 EXPOSE 8888
