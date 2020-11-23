@@ -136,8 +136,12 @@ RUN curl -Lo coursier https://git.io/coursier-cli \
 # RUN apt-get install  -y --no-install-recommends \
 #         erlang \
 #         elixir \
-COPY debs/esl-erlang_23.1-1_debian_buster_amd64.deb /tmp/esl-erlang_23.1-1_debian_buster_amd64.deb
-COPY debs/elixir_1.11.2-1_debian_buster_all.deb /tmp/elixir_1.11.2-1_debian_buster_all.deb
+RUN wget --header 'Accept-Encoding: gzip' \
+        -O /tmp/esl-erlang.deb \
+        'https://packages.erlang-solutions.com/erlang/debian/pool/esl-erlang_23.1-1~debian~buster_amd64.deb'
+RUN wget --header 'Accept-Encoding: gzip' \
+        -O /tmp/elixir.deb \
+        'https://packages.erlang-solutions.com/erlang/debian/pool/elixir_1.11.2-1~debian~buster_all.deb'
 RUN apt-get update -y \
     && apt-get install -y --no-install-recommends \
         libncurses5 \
@@ -145,8 +149,8 @@ RUN apt-get update -y \
         libwxgtk3.0-0v5 \
         libwxgtk3.0-gtk3-0v5 \
         libsctp1 \
-    && dpkg -i /tmp/esl-erlang_23.1-1_debian_buster_amd64.deb \
-    && dpkg -i /tmp/elixir_1.11.2-1_debian_buster_all.deb \
+    && dpkg -i /tmp/esl-erlang.deb \
+    && dpkg -i /tmp/elixir.deb \
     && rm -rf /tmp/*.deb
 RUN mix local.hex --force \
     && mix local.rebar --force
