@@ -13,7 +13,7 @@ Docker images of Jupyter Lab for various languages.
 | Erlang|OTP 23|[ierl](https://github.com/filmor/ierl)|
 | Go|1.15.0|[Gophernotes](https://github.com/gopherdata/gophernotes)|
 | Java |1.8.0_152|[SciJava Jupyter Kernel](https://github.com/hadim/scijava-jupyter-kernel)|
-| JavaScript(Node.js)|12.19.0|[IJavascript](https://github.com/n-riesco/ijavascript)|
+| JavaScript(Node.js)|14.15.1|[tslab](https://github.com/yunabe/tslab)|
 | Julia |1.5.2|[IJulia](https://github.com/JuliaLang/IJulia.jl)|
 | Kotlin|1.4.20|[jupyter\-kotlin](https://github.com/ligee/kotlin-jupyter)|
 | R |4.0.2|[IRKernel](http://irkernel.github.io/)|
@@ -21,7 +21,7 @@ Docker images of Jupyter Lab for various languages.
 | Rust |1.47.0|[EvCxR Jupyter Kernel](https://github.com/google/evcxr/tree/master/evcxr_jupyter)|
 | Scala |2.13.3|[almond](https://github.com/almond-sh/almond)|
 | Sparql||[SPARQL kernel](https://github.com/paulovn/sparql-kernel)|
-| Typescript| 3.9.0 | [ITypeScript](https://github.com/nearbydelta/itypescript)|
+| Typescript| 4.1.2 | [tslab](https://github.com/yunabe/tslab)|
 
 * Enabled [Plotly](https://plotly.com/python/), Dash and [leaflet](https://ipyleaflet.readthedocs.io/en/latest/) in Python.
 
