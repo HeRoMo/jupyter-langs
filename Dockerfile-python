@@ -5,7 +5,7 @@ FROM continuumio/miniconda3:4.8.2
 
 LABEL Maintainer="HeRoMo"
 LABEL Description="Jupyter lab for Python3 and Javascript"
-LABEL Version="5.3.0"
+LABEL Version="5.4.0"
 
 ENV HOME=/root
 ENV NOTEBOOK_DIR=/jupyter/notebooks
