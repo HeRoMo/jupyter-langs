@@ -172,3 +172,26 @@ RUN git clone https://github.com/filmor/ierl.git ierl \
 RUN conda clean --all \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# Install .NET Core
+ENV DOTNET_ROOT=/usr/share/dotnet \
+    PATH=/usr/share/dotnet:/root/.dotnet/tools:$PATH
+
+RUN wget -O dotnet.tar.gz https://download.visualstudio.microsoft.com/download/pr/ec187f12-929e-4aa7-8abc-2f52e147af1d/56b0dbb5da1c191bff2c271fcd6e6394/dotnet-sdk-3.1.404-linux-x64.tar.gz \
+    && wget -O dotnet_runtime.tar.gz https://download.visualstudio.microsoft.com/download/pr/eca743d3-030f-4b1b-bd15-3573091f1c02/f3e464abc31deb7bc2747ed6cc1a8f5c/aspnetcore-runtime-3.1.10-linux-x64.tar.gz \
+    && dotnet_sha512='94d8eca3b4e2e6c36135794330ab196c621aee8392c2545a19a991222e804027f300d8efd152e9e4893c4c610d6be8eef195e30e6f6675285755df1ea49d3605' \
+    && echo "$dotnet_sha512  dotnet.tar.gz" | sha512sum -c - \
+    && dotnet_runtime_sha512='884ec943eefc8397537a193d48d481eae8869eb82a8149f11b8a8bbca0cd75307e82e4db04a2329f03f8a50519afa27c0caa79193fb35a9c776efe1aff2d07a0' \
+    && echo "$dotnet_runtime_sha512  dotnet_runtime.tar.gz" | sha512sum -c - \
+    && mkdir -p "/usr/share/dotnet" \
+    && mkdir -p "/usr/bin/dotnet" \
+    && mkdir -p "/root/.dotnet/tools" \
+    && tar zxf dotnet.tar.gz -C "/usr/share/dotnet" \
+    && rm dotnet.tar.gz \
+    && tar zxf dotnet_runtime.tar.gz -C "/usr/share/dotnet" \
+    && rm dotnet_runtime.tar.gz \
+    && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet \
+    && dotnet help
+
+RUN dotnet tool install -g Microsoft.dotnet-interactive
+RUN dotnet interactive jupyter install
