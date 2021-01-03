@@ -174,8 +174,8 @@ RUN conda clean --all \
     && rm -rf /var/lib/apt/lists/*
 
 # Install .NET Core
-ENV DOTNET_ROOT=/usr/share/dotnet \
-    PATH=/usr/share/dotnet:/root/.dotnet/tools:$PATH
+ENV DOTNET_ROOT=/usr/share/dotnet
+ENV PATH=/usr/share/dotnet:/root/.dotnet/tools:$PATH
 
 RUN wget -O dotnet.tar.gz https://download.visualstudio.microsoft.com/download/pr/ec187f12-929e-4aa7-8abc-2f52e147af1d/56b0dbb5da1c191bff2c271fcd6e6394/dotnet-sdk-3.1.404-linux-x64.tar.gz \
     && wget -O dotnet_runtime.tar.gz https://download.visualstudio.microsoft.com/download/pr/eca743d3-030f-4b1b-bd15-3573091f1c02/f3e464abc31deb7bc2747ed6cc1a8f5c/aspnetcore-runtime-3.1.10-linux-x64.tar.gz \
