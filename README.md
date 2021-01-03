@@ -13,7 +13,7 @@ Docker images of Jupyter Lab for various languages.
 | Erlang|OTP 23|[ierl](https://github.com/filmor/ierl)|
 | Go|1.15.5|[Gophernotes](https://github.com/gopherdata/gophernotes)|
 | Java |1.8.0_152|[SciJava Jupyter Kernel](https://github.com/hadim/scijava-jupyter-kernel)|
-| JavaScript(Node.js)|14.15.1|[tslab](https://github.com/yunabe/tslab)|
+| JavaScript(Node.js)|14.15.3|[tslab](https://github.com/yunabe/tslab)|
 | Julia |1.5.3|[IJulia](https://github.com/JuliaLang/IJulia.jl)|
 | Kotlin|1.4.30|[jupyter\-kotlin](https://github.com/ligee/kotlin-jupyter)|
 | R |4.0.3|[IRKernel](http://irkernel.github.io/)|
@@ -21,7 +21,7 @@ Docker images of Jupyter Lab for various languages.
 | Rust |1.48.0|[EvCxR Jupyter Kernel](https://github.com/google/evcxr/tree/master/evcxr_jupyter)|
 | Scala |2.13.3|[almond](https://github.com/almond-sh/almond)|
 | Sparql||[SPARQL kernel](https://github.com/paulovn/sparql-kernel)|
-| Typescript| 4.1.2 | [tslab](https://github.com/yunabe/tslab)|
+| Typescript| 4.1.3 | [tslab](https://github.com/yunabe/tslab)|
 | C#(.Net5)| 9.0 | [.NET Interactive](https://github.com/dotnet/interactive)|
 | F#(.Net5)| 5.0 | [.NET Interactive](https://github.com/dotnet/interactive)|
 | Powershell(.Net5)| 7.0.3 | [.NET Interactive](https://github.com/dotnet/interactive)|

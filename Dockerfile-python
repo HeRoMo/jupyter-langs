@@ -1,11 +1,11 @@
-FROM node:14.15.1-buster-slim as nodejs
+FROM node:14.15.3-buster-slim as nodejs
 
 # jupyter-langs:python
-FROM continuumio/miniconda3:4.8.2
+FROM continuumio/miniconda3:4.9.2
 
 LABEL Maintainer="HeRoMo"
 LABEL Description="Jupyter lab for Python3 and Javascript"
-LABEL Version="5.4.0"
+LABEL Version="5.5.0"
 
 ENV HOME=/root
 ENV NOTEBOOK_DIR=/jupyter/notebooks
@@ -52,9 +52,9 @@ RUN conda install -y -c conda-forge  \
                 matplotlib \
                 tensorflow \
                 keras \
-                jupyterlab \
+                jupyterlab=2.2 \
                 libiconv \
-                ipywidgets \
+                ipywidgets=7.5 \
                 ipyleaflet \
                 # for dash
                 plotly \
@@ -73,7 +73,7 @@ COPY conf/matplotlibrc $MATPLOTLIBRC/matplotlibrc
 COPY conf/jupyter_notebook_config.py $JUPYTER_DIR/jupyter_notebook_config.py
 
 # Install Javascript
-ENV NODE_VERSION 14.15.1
+ENV NODE_VERSION 14.15.3
 ENV YARN_VERSION 1.22.5
 RUN mkdir -p /opt
 COPY --from=nodejs /opt/yarn-v${YARN_VERSION} /opt/yarn
@@ -91,8 +91,8 @@ RUN yarn global add typescript tslab \
 # Install jupyter labextensions
 RUN jupyter labextension install \
             @jupyter-widgets/jupyterlab-manager \ 
-            plotlywidget \
             jupyterlab-plotly \
+            # plotlywidget \
             jupyter-leaflet \
     && jupyter lab build
 
