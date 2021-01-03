@@ -22,6 +22,9 @@ Docker images of Jupyter Lab for various languages.
 | Scala |2.13.3|[almond](https://github.com/almond-sh/almond)|
 | Sparql||[SPARQL kernel](https://github.com/paulovn/sparql-kernel)|
 | Typescript| 4.1.2 | [tslab](https://github.com/yunabe/tslab)|
+| C#(.Net5)| 9.0 | [.NET Interactive](https://github.com/dotnet/interactive)|
+| F#(.Net5)| 5.0 | [.NET Interactive](https://github.com/dotnet/interactive)|
+| Powershell(.Net5)| 7.0.3 | [.NET Interactive](https://github.com/dotnet/interactive)|
 
 * Enabled [Plotly](https://plotly.com/python/), Dash and [leaflet](https://ipyleaflet.readthedocs.io/en/latest/) in Python.
 
