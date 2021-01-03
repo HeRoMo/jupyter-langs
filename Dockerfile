@@ -193,5 +193,5 @@ RUN wget -O dotnet.tar.gz https://download.visualstudio.microsoft.com/download/p
     && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet \
     && dotnet help
 
-RUN dotnet tool install -g Microsoft.dotnet-interactive
-RUN dotnet interactive jupyter install
+RUN dotnet tool install -g Microsoft.dotnet-interactive \
+    && dotnet interactive jupyter install
