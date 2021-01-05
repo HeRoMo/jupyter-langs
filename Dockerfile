@@ -1,11 +1,11 @@
 # jupyter-langs:latest
-FROM golang:1.15.5-buster as golang
+FROM golang:1.15.6-buster as golang
 FROM julia:1.5.3-buster as julia
 
 FROM ghcr.io/heromo/jupyter-langs/python:latest
 LABEL Maintainer="HeRoMo"
 LABEL Description="Jupyter lab for various languages"
-LABEL Version="5.4.0"
+LABEL Version="5.5.0"
 
 # Install SPARQL
 RUN pip install sparqlkernel && \
@@ -47,7 +47,7 @@ RUN julia --version
 RUN julia -e 'using Pkg; Pkg.add("IJulia")'
 
 # Install golang
-ENV GO_VERSION=1.15.5
+ENV GO_VERSION=1.15.6
 ENV GOPATH=/go
 ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
 COPY --from=golang /usr/local/go/ /usr/local/go/
@@ -59,7 +59,7 @@ RUN go get -u github.com/gopherdata/gophernotes \
 ENV RUSTUP_HOME=/usr/local/rustup
 ENV CARGO_HOME=/usr/local/cargo
 ENV PATH=/usr/local/cargo/bin:$PATH
-ENV RUST_VERSION=1.48.0
+ENV RUST_VERSION=1.49.0
 ENV rustupSha256='49c96f3f74be82f4752b8bffcf81961dea5e6e94ce1ccba94435f12e871c3bdb'
 RUN set -eux; \
     url="https://static.rust-lang.org/rustup/archive/1.22.1/x86_64-unknown-linux-gnu/rustup-init"; \
@@ -76,7 +76,7 @@ RUN cargo install evcxr_jupyter \
     && evcxr_jupyter --install
 
 # Install Ruby
-ENV RUBY_VERSION=2.7.2
+ENV RUBY_VERSION=3.0.0
 ENV RUBY_HOME=/opt/ruby
 RUN apt-get update -y \
     && apt-get install  -y --no-install-recommends \
@@ -138,7 +138,7 @@ RUN curl -Lo coursier https://git.io/coursier-cli \
 #         elixir \
 RUN wget --header 'Accept-Encoding: gzip' \
         -O /tmp/esl-erlang.deb \
-        'https://packages.erlang-solutions.com/erlang/debian/pool/esl-erlang_23.1-1~debian~buster_amd64.deb'
+        'https://packages.erlang-solutions.com/erlang/debian/pool/esl-erlang_23.2.1-1~debian~buster_amd64.deb'
 RUN wget --header 'Accept-Encoding: gzip' \
         -O /tmp/elixir.deb \
         'https://packages.erlang-solutions.com/erlang/debian/pool/elixir_1.11.2-1~debian~buster_all.deb'
@@ -168,11 +168,6 @@ RUN git clone https://github.com/filmor/ierl.git ierl \
     && cd .. \
     && rm -rf ierl
 
-# ↓ 削除系ははまとめてここでやる    
-RUN conda clean --all \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
 # Install .NET5
 ENV DOTNET_ROOT=/usr/share/dotnet
 ENV PATH=/usr/share/dotnet:/root/.dotnet/tools:$PATH
@@ -192,6 +187,11 @@ RUN wget -O dotnet.tar.gz https://download.visualstudio.microsoft.com/download/p
     && rm dotnet_runtime.tar.gz \
     && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet \
     && dotnet help
+
+# ↓ 削除系ははまとめてここでやる    
+RUN conda clean --all \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN dotnet tool install -g --add-source "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json" Microsoft.dotnet-interactive \
     && dotnet interactive jupyter install
