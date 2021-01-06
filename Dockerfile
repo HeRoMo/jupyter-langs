@@ -1,6 +1,7 @@
 # jupyter-langs:latest
 FROM golang:1.15.5-buster as golang
 FROM julia:1.5.3-buster as julia
+FROM php:7.2 as php
 
 FROM ghcr.io/heromo/jupyter-langs/python:latest
 LABEL Maintainer="HeRoMo"
@@ -195,3 +196,6 @@ RUN wget -O dotnet.tar.gz https://download.visualstudio.microsoft.com/download/p
 
 RUN dotnet tool install -g --add-source "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json" Microsoft.dotnet-interactive \
     && dotnet interactive jupyter install
+
+# # Install CPP(xeus-cling)
+RUN conda install -y -c conda-forge xeus-cling xtensor
