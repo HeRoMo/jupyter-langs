@@ -25,6 +25,7 @@ Docker images of Jupyter Lab for various languages.
 | C#(.Net5)| 9.0 | [.NET Interactive](https://github.com/dotnet/interactive)|
 | F#(.Net5)| 5.0 | [.NET Interactive](https://github.com/dotnet/interactive)|
 | Powershell(.Net5)| 7.0.3 | [.NET Interactive](https://github.com/dotnet/interactive)|
+| C++| 11/14/17 | [xeus-cling](https://github.com/jupyter-xeus/xeus-cling)|
 
 * Enabled [Plotly](https://plotly.com/python/), Dash and [leaflet](https://ipyleaflet.readthedocs.io/en/latest/) in Python.
 
