@@ -1,7 +1,6 @@
 # jupyter-langs:latest
 FROM golang:1.15.5-buster as golang
 FROM julia:1.5.3-buster as julia
-FROM php:7.2 as php
 
 FROM ghcr.io/heromo/jupyter-langs/python:latest
 LABEL Maintainer="HeRoMo"
@@ -199,3 +198,8 @@ RUN dotnet tool install -g --add-source "https://pkgs.dev.azure.com/dnceng/publi
 
 # # Install CPP(xeus-cling)
 RUN conda install -y -c conda-forge xeus-cling xtensor
+
+# add jupyterlab extension
+RUN jupyter labextension install \
+            @lckr/jupyterlab_variableinspector \
+            @jupyterlab/toc
