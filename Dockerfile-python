@@ -52,7 +52,7 @@ RUN conda install -y -c conda-forge  \
                 matplotlib \
                 tensorflow \
                 keras \
-                jupyterlab \
+                jupyterlab=3 \
                 libiconv \
                 ipywidgets \
                 ipyleaflet \
@@ -62,6 +62,7 @@ RUN conda install -y -c conda-forge  \
                 lxml \
                 xlrd \
                 xlwt \
+                xeus-python \
     && conda clean --all
 # RUN jupyter contrib nbextension install --user
 RUN pip install tflearn jupyter_dash
@@ -92,8 +93,11 @@ RUN yarn global add typescript tslab \
 RUN jupyter labextension install \
             @jupyter-widgets/jupyterlab-manager \ 
             plotlywidget \
-            jupyterlab-plotly \
+            # jupyterlab-plotly \
             jupyter-leaflet \
+            @lckr/jupyterlab_variableinspector \
+            @jupyterlab/toc \
+            @jupyterlab/debugger \
     && jupyter lab build
 
 # for JupyterLab
