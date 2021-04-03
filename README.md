@@ -8,7 +8,7 @@ Docker images of Jupyter Lab for various languages.
 
 |Languages|Version|jupyter kernel|
 |---|--:|---|
-| Python|3.8.8|[IPython](https://ipython.org/)|
+| Python|3.9.2|[IPython](https://ipython.org/)|
 | C#(.Net5)| 9.0 | [.NET Interactive](https://github.com/dotnet/interactive)|
 | Elixir|1.11.2|[ierl](https://github.com/filmor/ierl)|
 | Erlang|OTP 23.2.1|[ierl](https://github.com/filmor/ierl)|
