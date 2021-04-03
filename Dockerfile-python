@@ -1,11 +1,11 @@
-FROM node:14.15.3-buster-slim as nodejs
+FROM node:14.16.0-buster-slim as nodejs
 
 # jupyter-langs:python
 FROM continuumio/miniconda3:4.9.2
 
 LABEL Maintainer="HeRoMo"
 LABEL Description="Jupyter lab for Python3 and Javascript"
-LABEL Version="5.5.0"
+LABEL Version="5.6.0"
 
 ENV HOME=/root
 ENV NOTEBOOK_DIR=/jupyter/notebooks
@@ -73,7 +73,7 @@ COPY conf/matplotlibrc $MATPLOTLIBRC/matplotlibrc
 COPY conf/jupyter_notebook_config.py $JUPYTER_DIR/jupyter_notebook_config.py
 
 # Install Javascript
-ENV NODE_VERSION 14.15.3
+ENV NODE_VERSION 14.16.0
 ENV YARN_VERSION 1.22.5
 RUN mkdir -p /opt
 COPY --from=nodejs /opt/yarn-v${YARN_VERSION} /opt/yarn
@@ -90,11 +90,11 @@ RUN yarn global add typescript tslab \
 
 # Install jupyter labextensions
 RUN jupyter labextension install \
-            @jupyter-widgets/jupyterlab-manager \ 
+            @jupyter-widgets/jupyterlab-manager
+RUN jupyter labextension install --minimize=false \
             jupyterlab-plotly \
-            # plotlywidget \
-            jupyter-leaflet \
-    && jupyter lab build
+            plotlywidget \
+            jupyter-leaflet
 
 # for JupyterLab
 EXPOSE 8888
