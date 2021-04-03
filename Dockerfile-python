@@ -45,16 +45,16 @@ RUN conda update -n base -c defaults conda
 # Install Jupyter
 RUN conda update -c conda-forge --all
 RUN conda install -y -c conda-forge  \
-                python=3.8 \
+                python=3.9 \
                 pandas \
                 scipy \
                 bokeh \
                 matplotlib \
                 tensorflow \
                 keras \
-                jupyterlab=2.2 \
+                jupyterlab=3.0 \
                 libiconv \
-                ipywidgets=7.5 \
+                ipywidgets=7.6 \
                 ipyleaflet \
                 # for dash
                 plotly \
@@ -90,8 +90,7 @@ RUN yarn global add typescript tslab \
 
 # Install jupyter labextensions
 RUN jupyter labextension install \
-            @jupyter-widgets/jupyterlab-manager
-RUN jupyter labextension install --minimize=false \
+            @jupyter-widgets/jupyterlab-manager \
             jupyterlab-plotly \
             plotlywidget \
             jupyter-leaflet
