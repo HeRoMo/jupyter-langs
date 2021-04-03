@@ -1,11 +1,11 @@
 # jupyter-langs:latest
-FROM golang:1.15.6-buster as golang
-FROM julia:1.5.3-buster as julia
+FROM golang:1.16.3-buster as golang
+FROM julia:1.6.0-buster as julia
 
 FROM ghcr.io/heromo/jupyter-langs/python:latest
 LABEL Maintainer="HeRoMo"
 LABEL Description="Jupyter lab for various languages"
-LABEL Version="5.5.0"
+LABEL Version="5.6.0"
 
 # Install SPARQL
 RUN pip install sparqlkernel && \
@@ -47,22 +47,27 @@ RUN julia --version
 RUN julia -e 'using Pkg; Pkg.add("IJulia")'
 
 # Install golang
-ENV GO_VERSION=1.15.6
+ENV GO_VERSION=1.16.3
 ENV GOPATH=/go
 ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
 COPY --from=golang /usr/local/go/ /usr/local/go/
-RUN go get -u github.com/gopherdata/gophernotes \
+RUN env GO111MODULE=off go get -d -u github.com/gopherdata/gophernotes \
+    && cd "$(go env GOPATH)"/src/github.com/gopherdata/gophernotes \
+    && env GO111MODULE=on go install \
     && mkdir -p $HOME/.local/share/jupyter/kernels/gophernotes \
-    && cp -r /go/src/github.com/gopherdata/gophernotes/kernel/* $HOME/.local/share/jupyter/kernels/gophernotes
+    && cp kernel/* $HOME/.local/share/jupyter/kernels/gophernotes \
+    && cd $HOME/.local/share/jupyter/kernels/gophernotes \
+    && chmod +w ./kernel.json \
+    && sed "s|gophernotes|$(go env GOPATH)/bin/gophernotes|" < kernel.json.in > kernel.json
 
 # Install Rust 
 ENV RUSTUP_HOME=/usr/local/rustup
 ENV CARGO_HOME=/usr/local/cargo
 ENV PATH=/usr/local/cargo/bin:$PATH
-ENV RUST_VERSION=1.49.0
-ENV rustupSha256='49c96f3f74be82f4752b8bffcf81961dea5e6e94ce1ccba94435f12e871c3bdb'
+ENV RUST_VERSION=1.51.0
+ENV rustupSha256='ed7773edaf1d289656bdec2aacad12413b38ad0193fff54b2231f5140a4b07c5'
 RUN set -eux; \
-    url="https://static.rust-lang.org/rustup/archive/1.22.1/x86_64-unknown-linux-gnu/rustup-init"; \
+    url="https://static.rust-lang.org/rustup/archive/1.23.1/x86_64-unknown-linux-gnu/rustup-init"; \
     wget "$url"; \
     echo "${rustupSha256} *rustup-init" | sha256sum -c -; \
     chmod +x rustup-init; \
@@ -138,7 +143,7 @@ RUN curl -Lo coursier https://git.io/coursier-cli \
 #         elixir \
 RUN wget --header 'Accept-Encoding: gzip' \
         -O /tmp/esl-erlang.deb \
-        'https://packages.erlang-solutions.com/erlang/debian/pool/esl-erlang_23.2.1-1~debian~buster_amd64.deb'
+        'https://packages.erlang-solutions.com/erlang/debian/pool/esl-erlang_23.2.3-1~debian~buster_amd64.deb'
 RUN wget --header 'Accept-Encoding: gzip' \
         -O /tmp/elixir.deb \
         'https://packages.erlang-solutions.com/erlang/debian/pool/elixir_1.11.2-1~debian~buster_all.deb'
@@ -171,12 +176,11 @@ RUN git clone https://github.com/filmor/ierl.git ierl \
 # Install .NET5
 ENV DOTNET_ROOT=/usr/share/dotnet
 ENV PATH=/usr/share/dotnet:/root/.dotnet/tools:$PATH
-
-RUN wget -O dotnet.tar.gz https://download.visualstudio.microsoft.com/download/pr/a0487784-534a-4912-a4dd-017382083865/be16057043a8f7b6f08c902dc48dd677/dotnet-sdk-5.0.101-linux-x64.tar.gz \
-    && wget -O dotnet_runtime.tar.gz https://download.visualstudio.microsoft.com/download/pr/6bea1cea-89e8-4bf7-9fc1-f77380443db1/0fb741b7d587cce798ebee80732196ef/aspnetcore-runtime-5.0.1-linux-x64.tar.gz \
-    && dotnet_sha512='398d88099d765b8f5b920a3a2607c2d2d8a946786c1a3e51e73af1e663f0ee770b2b624a630b1bec1ceed43628ea8bc97963ba6c870d42bec064bde1cd1c9edb' \
+RUN wget -O dotnet.tar.gz https://download.visualstudio.microsoft.com/download/pr/73a9cb2a-1acd-4d20-b864-d12797ca3d40/075dbe1dc3bba4aa85ca420167b861b6/dotnet-sdk-5.0.201-linux-x64.tar.gz \
+    && wget -O dotnet_runtime.tar.gz https://download.visualstudio.microsoft.com/download/pr/131d9f6b-0f49-474e-a7c5-33754d4e9195/52fae63c358d8e8e6211a50a64fe3dfd/aspnetcore-runtime-5.0.4-linux-x64.tar.gz \
+    && dotnet_sha512='099084cc7935482e363bd7802d2fdd909b3d72d2e9706e9ba4df95e3d142a28b780d2b85e5fb4662dcaad18e91c7e06519184fae981a521425eed605770c3c5a' \
     && echo "$dotnet_sha512  dotnet.tar.gz" | sha512sum -c - \
-    && dotnet_runtime_sha512='fec655aed2e73288e84d940fd356b596e266a3e74c37d9006674c4f923fb7cde5eafe30b7dcb43251528166c02724df5856e7174f1a46fc33036b0f8db92688a' \
+    && dotnet_runtime_sha512='6075649abf4f99ff19f472a3ce6290cf277e7620ab9e65a09d5884a265c50884d50496d6ceb70011b9caaad09ff8428a149cb0aa0b965a17f0a4f5f5e02b920c' \
     && echo "$dotnet_runtime_sha512  dotnet_runtime.tar.gz" | sha512sum -c - \
     && mkdir -p "/usr/share/dotnet" \
     && mkdir -p "/usr/bin/dotnet" \
@@ -187,11 +191,12 @@ RUN wget -O dotnet.tar.gz https://download.visualstudio.microsoft.com/download/p
     && rm dotnet_runtime.tar.gz \
     && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet \
     && dotnet help
+RUN dotnet tool install -g --add-source "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json" Microsoft.dotnet-interactive \
+    && dotnet interactive jupyter install
 
 # ↓ 削除系ははまとめてここでやる    
 RUN conda clean --all \
+    && apt-get autoremove \
     && apt-get clean \
+    && apt-get autoclean \
     && rm -rf /var/lib/apt/lists/*
-
-RUN dotnet tool install -g --add-source "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json" Microsoft.dotnet-interactive \
-    && dotnet interactive jupyter install
