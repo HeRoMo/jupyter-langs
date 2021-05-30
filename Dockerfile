@@ -82,7 +82,7 @@ RUN cargo install evcxr_jupyter \
     && evcxr_jupyter --install
 
 # Install Ruby
-ENV RUBY_VERSION=3.0.0
+ENV RUBY_VERSION=3.0.1
 ENV RUBY_HOME=/opt/ruby
 RUN apt-get update -y \
     && apt-get install  -y --no-install-recommends \
