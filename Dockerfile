@@ -131,7 +131,7 @@ RUN conda install --quiet --yes -c jetbrains \
 ## Scala
 RUN curl -Lo coursier https://git.io/coursier-cli \
     && chmod +x coursier \
-    && ./coursier launch --fork almond -- --install \
+    && ./coursier launch --fork almond:0.11.1 -- --install \
     && rm -f coursier
 
 # Install Erlang and Elixir
