@@ -1,5 +1,5 @@
 # jupyter-langs:latest
-FROM golang:1.16.3-buster as golang
+FROM golang:1.16.4-buster as golang
 FROM julia:1.6.0-buster as julia
 
 FROM ghcr.io/heromo/jupyter-langs/python:latest
@@ -47,7 +47,7 @@ RUN julia --version
 RUN julia -e 'using Pkg; Pkg.add("IJulia")'
 
 # Install golang
-ENV GO_VERSION=1.16.3
+ENV GO_VERSION=1.16.4
 ENV GOPATH=/go
 ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
 COPY --from=golang /usr/local/go/ /usr/local/go/
