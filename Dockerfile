@@ -1,6 +1,6 @@
 # jupyter-langs:latest
 FROM golang:1.16.4-buster as golang
-FROM julia:1.6.0-buster as julia
+FROM julia:1.6.1-buster as julia
 
 FROM ghcr.io/heromo/jupyter-langs/python:latest
 LABEL Maintainer="HeRoMo"
