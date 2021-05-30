@@ -1,11 +1,11 @@
-FROM node:14.16.0-buster-slim as nodejs
+FROM node:14.17.0-buster-slim as nodejs
 
 # jupyter-langs:python
 FROM continuumio/miniconda3:4.9.2
 
 LABEL Maintainer="HeRoMo"
 LABEL Description="Jupyter lab for Python3 and Javascript"
-LABEL Version="5.6.0"
+LABEL Version="5.7.0"
 
 ENV HOME=/root
 ENV NOTEBOOK_DIR=/jupyter/notebooks
@@ -62,7 +62,7 @@ RUN conda install -y -c conda-forge  \
                 lxml \
                 xlrd \
                 xlwt \
-    && conda clean --all
+    && conda clean -y --all
 # RUN jupyter contrib nbextension install --user
 RUN pip install tflearn jupyter_dash
 
@@ -73,7 +73,7 @@ COPY conf/matplotlibrc $MATPLOTLIBRC/matplotlibrc
 COPY conf/jupyter_notebook_config.py $JUPYTER_DIR/jupyter_notebook_config.py
 
 # Install Javascript
-ENV NODE_VERSION 14.16.0
+ENV NODE_VERSION 14.17.0
 ENV YARN_VERSION 1.22.5
 RUN mkdir -p /opt
 COPY --from=nodejs /opt/yarn-v${YARN_VERSION} /opt/yarn
