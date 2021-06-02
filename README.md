@@ -10,18 +10,18 @@ Docker images of Jupyter Lab for various languages.
 |---|--:|---|
 | Python|3.9.4|[IPython](https://ipython.org/)|
 | C#(.Net5)| 9.0 | [.NET Interactive](https://github.com/dotnet/interactive)|
-| Elixir|1.11.2|[ierl](https://github.com/filmor/ierl)|
-| Erlang|OTP 23.2.3|[ierl](https://github.com/filmor/ierl)|
+| Elixir|1.12.0|[ierl](https://github.com/filmor/ierl)|
+| Erlang|OTP 24.0.1|[ierl](https://github.com/filmor/ierl)|
 | F#(.Net5)| 5.0 | [.NET Interactive](https://github.com/dotnet/interactive)|
-| Go|1.16.0|[Gophernotes](https://github.com/gopherdata/gophernotes)|
+| Go|1.16.4|[Gophernotes](https://github.com/gopherdata/gophernotes)|
 | Java |1.8.0_152|[SciJava Jupyter Kernel](https://github.com/hadim/scijava-jupyter-kernel)|
 | JavaScript(Node.js)|14.17.0|[tslab](https://github.com/yunabe/tslab)|
-| Julia |1.6.0|[IJulia](https://github.com/JuliaLang/IJulia.jl)|
-| Kotlin|1.5.20|[jupyter\-kotlin](https://github.com/ligee/kotlin-jupyter)|
-| Powershell(.Net5)| 7.0.4 | [.NET Interactive](https://github.com/dotnet/interactive)|
-| R |4.0.3|[IRKernel](http://irkernel.github.io/)|
-| Ruby| 3.0.0 |[IRuby](https://github.com/SciRuby/iruby)|
-| Rust |1.51.0|[EvCxR Jupyter Kernel](https://github.com/google/evcxr/tree/master/evcxr_jupyter)|
+| Julia |1.6.1|[IJulia](https://github.com/JuliaLang/IJulia.jl)|
+| Kotlin|1.5.30|[jupyter\-kotlin](https://github.com/ligee/kotlin-jupyter)|
+| Powershell(.Net5)| 7.1.3 | [.NET Interactive](https://github.com/dotnet/interactive)|
+| R |4.0.5|[IRKernel](http://irkernel.github.io/)|
+| Ruby| 3.0.1 |[IRuby](https://github.com/SciRuby/iruby)|
+| Rust |1.52.1|[EvCxR Jupyter Kernel](https://github.com/google/evcxr/tree/master/evcxr_jupyter)|
 | Scala |2.13.4|[almond](https://github.com/almond-sh/almond)|
 | Sparql||[SPARQL kernel](https://github.com/paulovn/sparql-kernel)|
 | Typescript| 4.3.2 | [tslab](https://github.com/yunabe/tslab)|
