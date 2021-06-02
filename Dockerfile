@@ -5,7 +5,7 @@ FROM julia:1.6.1-buster as julia
 FROM ghcr.io/heromo/jupyter-langs/python:latest
 LABEL Maintainer="HeRoMo"
 LABEL Description="Jupyter lab for various languages"
-LABEL Version="5.6.0"
+LABEL Version="5.7.0"
 
 # Install SPARQL
 RUN pip install sparqlkernel && \
@@ -177,11 +177,13 @@ RUN git clone https://github.com/filmor/ierl.git ierl \
 # Install .NET5
 ENV DOTNET_ROOT=/usr/share/dotnet
 ENV PATH=/usr/share/dotnet:/root/.dotnet/tools:$PATH
-RUN wget -O dotnet.tar.gz https://download.visualstudio.microsoft.com/download/pr/73a9cb2a-1acd-4d20-b864-d12797ca3d40/075dbe1dc3bba4aa85ca420167b861b6/dotnet-sdk-5.0.201-linux-x64.tar.gz \
-    && wget -O dotnet_runtime.tar.gz https://download.visualstudio.microsoft.com/download/pr/131d9f6b-0f49-474e-a7c5-33754d4e9195/52fae63c358d8e8e6211a50a64fe3dfd/aspnetcore-runtime-5.0.4-linux-x64.tar.gz \
-    && dotnet_sha512='099084cc7935482e363bd7802d2fdd909b3d72d2e9706e9ba4df95e3d142a28b780d2b85e5fb4662dcaad18e91c7e06519184fae981a521425eed605770c3c5a' \
+ENV DOTNET_SDK_VERSION=5.0.300
+ENV DOTNET_VERSION=5.0.6
+RUN wget -O dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/$DOTNET_SDK_VERSION/dotnet-sdk-$DOTNET_SDK_VERSION-linux-x64.tar.gz \
+    && wget -O dotnet_runtime.tar.gz https://dotnetcli.azureedge.net/dotnet/Runtime/$DOTNET_VERSION/dotnet-runtime-$DOTNET_VERSION-linux-x64.tar.gz \
+    && dotnet_sha512='724a8e6ed77d2d3b957b8e5eda82ca8c99152d8691d1779b4a637d9ff781775f983468ee46b0bc8ad0ddbfd9d537dd8decb6784f43edae72c9529a90767310d2' \
     && echo "$dotnet_sha512  dotnet.tar.gz" | sha512sum -c - \
-    && dotnet_runtime_sha512='6075649abf4f99ff19f472a3ce6290cf277e7620ab9e65a09d5884a265c50884d50496d6ceb70011b9caaad09ff8428a149cb0aa0b965a17f0a4f5f5e02b920c' \
+    && dotnet_runtime_sha512='7aece6b763305fcf6e47e31540830797670287622ec424e689967c8974f80cefdb04961fc8cdf23c67588f3b0804b5e8291f87b06b10f2fc83d48ce0b9700d38' \
     && echo "$dotnet_runtime_sha512  dotnet_runtime.tar.gz" | sha512sum -c - \
     && mkdir -p "/usr/share/dotnet" \
     && mkdir -p "/usr/bin/dotnet" \
