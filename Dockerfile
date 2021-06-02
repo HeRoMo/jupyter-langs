@@ -135,29 +135,29 @@ RUN curl -Lo coursier https://git.io/coursier-cli \
     && rm -f coursier
 
 # Install Erlang and Elixir
-# RUN wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb \
-#     && dpkg -i erlang-solutions_2.0_all.deb \
-#     && rm -f erlang-solutions_2.0_all.deb
-# RUN apt-get update; exit 0
-# RUN apt-get install  -y --no-install-recommends \
-#         erlang \
-#         elixir \
-RUN wget --header 'Accept-Encoding: gzip' \
-        -O /tmp/esl-erlang.deb \
-        'https://packages.erlang-solutions.com/erlang/debian/pool/esl-erlang_23.2.3-1~debian~buster_amd64.deb'
-RUN wget --header 'Accept-Encoding: gzip' \
-        -O /tmp/elixir.deb \
-        'https://packages.erlang-solutions.com/erlang/debian/pool/elixir_1.11.2-1~debian~buster_all.deb'
-RUN apt-get update -y \
-    && apt-get install -y --no-install-recommends \
-        libncurses5 \
-        libwxbase3.0-0v5 \
-        libwxgtk3.0-0v5 \
-        libwxgtk3.0-gtk3-0v5 \
-        libsctp1 \
-    && dpkg -i /tmp/esl-erlang.deb \
-    && dpkg -i /tmp/elixir.deb \
-    && rm -rf /tmp/*.deb
+RUN wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb \
+    && dpkg -i erlang-solutions_2.0_all.deb \
+    && rm -f erlang-solutions_2.0_all.deb
+RUN apt-get update; exit 0
+RUN apt-get install  -y --no-install-recommends \
+        erlang \
+        elixir
+# RUN wget --header 'Accept-Encoding: gzip' \
+#         -O /tmp/esl-erlang.deb \
+#         'https://packages.erlang-solutions.com/erlang/debian/pool/erlang_24.0-1~debian~buster_all.deb'
+# RUN wget --header 'Accept-Encoding: gzip' \
+#         -O /tmp/elixir.deb \
+#         'https://packages.erlang-solutions.com/erlang/debian/pool/elixir_1.12.0-1~debian~buster_all.deb'
+# RUN apt-get update -y \
+#     && apt-get install -y --no-install-recommends \
+#         libncurses5 \
+#         libwxbase3.0-0v5 \
+#         libwxgtk3.0-0v5 \
+#         libwxgtk3.0-gtk3-0v5 \
+#         libsctp1 \
+#     && dpkg -i /tmp/esl-erlang.deb \
+#     && dpkg -i /tmp/elixir.deb \
+#     && rm -rf /tmp/*.deb
 RUN mix local.hex --force \
     && mix local.rebar --force
 RUN git clone https://github.com/filmor/ierl.git ierl \
@@ -166,8 +166,8 @@ RUN git clone https://github.com/filmor/ierl.git ierl \
     && mix deps.get \
     # Build lfe explicitly for now
     && (cd deps/lfe && ~/.mix/rebar3 compile) \
-    && env MIX_ENV=prod mix escript.build \
-    && cp ierl $HOME/.ierl/ierl.escript \
+    && (cd apps/ierl && env MIX_ENV=prod mix escript.build) \
+    && cp apps/ierl/ierl $HOME/.ierl/ierl.escript \
     && chmod +x $HOME/.ierl/ierl.escript \
     && $HOME/.ierl/ierl.escript install erlang --user \
     && $HOME/.ierl/ierl.escript install elixir --user \
