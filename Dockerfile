@@ -1,11 +1,11 @@
 # jupyter-langs:latest
-FROM golang:1.16.3-buster as golang
-FROM julia:1.6.0-buster as julia
+FROM golang:1.16.4-buster as golang
+FROM julia:1.6.1-buster as julia
 
 FROM ghcr.io/heromo/jupyter-langs/python:latest
 LABEL Maintainer="HeRoMo"
 LABEL Description="Jupyter lab for various languages"
-LABEL Version="5.6.0"
+LABEL Version="5.7.0"
 
 # Install SPARQL
 RUN pip install sparqlkernel && \
@@ -47,7 +47,7 @@ RUN julia --version
 RUN julia -e 'using Pkg; Pkg.add("IJulia")'
 
 # Install golang
-ENV GO_VERSION=1.16.3
+ENV GO_VERSION=1.16.4
 ENV GOPATH=/go
 ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
 COPY --from=golang /usr/local/go/ /usr/local/go/
@@ -64,10 +64,11 @@ RUN env GO111MODULE=off go get -d -u github.com/gopherdata/gophernotes \
 ENV RUSTUP_HOME=/usr/local/rustup
 ENV CARGO_HOME=/usr/local/cargo
 ENV PATH=/usr/local/cargo/bin:$PATH
-ENV RUST_VERSION=1.51.0
-ENV rustupSha256='ed7773edaf1d289656bdec2aacad12413b38ad0193fff54b2231f5140a4b07c5'
+ENV RUST_VERSION=1.52.1
+ENV RUSTUP_VERSION=1.24.1
+ENV rustupSha256='fb3a7425e3f10d51f0480ac3cdb3e725977955b2ba21c9bdac35309563b115e8'
 RUN set -eux; \
-    url="https://static.rust-lang.org/rustup/archive/1.23.1/x86_64-unknown-linux-gnu/rustup-init"; \
+    url="https://static.rust-lang.org/rustup/archive/${RUSTUP_VERSION}/x86_64-unknown-linux-gnu/rustup-init"; \
     wget "$url"; \
     echo "${rustupSha256} *rustup-init" | sha256sum -c -; \
     chmod +x rustup-init; \
@@ -81,7 +82,7 @@ RUN cargo install evcxr_jupyter \
     && evcxr_jupyter --install
 
 # Install Ruby
-ENV RUBY_VERSION=3.0.0
+ENV RUBY_VERSION=3.0.1
 ENV RUBY_HOME=/opt/ruby
 RUN apt-get update -y \
     && apt-get install  -y --no-install-recommends \
@@ -130,33 +131,33 @@ RUN conda install --quiet --yes -c jetbrains \
 ## Scala
 RUN curl -Lo coursier https://git.io/coursier-cli \
     && chmod +x coursier \
-    && ./coursier launch --fork almond -- --install \
+    && ./coursier launch --fork almond:0.11.1 -- --install \
     && rm -f coursier
 
 # Install Erlang and Elixir
-# RUN wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb \
-#     && dpkg -i erlang-solutions_2.0_all.deb \
-#     && rm -f erlang-solutions_2.0_all.deb
-# RUN apt-get update; exit 0
-# RUN apt-get install  -y --no-install-recommends \
-#         erlang \
-#         elixir \
-RUN wget --header 'Accept-Encoding: gzip' \
-        -O /tmp/esl-erlang.deb \
-        'https://packages.erlang-solutions.com/erlang/debian/pool/esl-erlang_23.2.3-1~debian~buster_amd64.deb'
-RUN wget --header 'Accept-Encoding: gzip' \
-        -O /tmp/elixir.deb \
-        'https://packages.erlang-solutions.com/erlang/debian/pool/elixir_1.11.2-1~debian~buster_all.deb'
-RUN apt-get update -y \
-    && apt-get install -y --no-install-recommends \
-        libncurses5 \
-        libwxbase3.0-0v5 \
-        libwxgtk3.0-0v5 \
-        libwxgtk3.0-gtk3-0v5 \
-        libsctp1 \
-    && dpkg -i /tmp/esl-erlang.deb \
-    && dpkg -i /tmp/elixir.deb \
-    && rm -rf /tmp/*.deb
+RUN wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb \
+    && dpkg -i erlang-solutions_2.0_all.deb \
+    && rm -f erlang-solutions_2.0_all.deb
+RUN apt-get update; exit 0
+RUN apt-get install  -y --no-install-recommends \
+        erlang \
+        elixir
+# RUN wget --header 'Accept-Encoding: gzip' \
+#         -O /tmp/esl-erlang.deb \
+#         'https://packages.erlang-solutions.com/erlang/debian/pool/erlang_24.0-1~debian~buster_all.deb'
+# RUN wget --header 'Accept-Encoding: gzip' \
+#         -O /tmp/elixir.deb \
+#         'https://packages.erlang-solutions.com/erlang/debian/pool/elixir_1.12.0-1~debian~buster_all.deb'
+# RUN apt-get update -y \
+#     && apt-get install -y --no-install-recommends \
+#         libncurses5 \
+#         libwxbase3.0-0v5 \
+#         libwxgtk3.0-0v5 \
+#         libwxgtk3.0-gtk3-0v5 \
+#         libsctp1 \
+#     && dpkg -i /tmp/esl-erlang.deb \
+#     && dpkg -i /tmp/elixir.deb \
+#     && rm -rf /tmp/*.deb
 RUN mix local.hex --force \
     && mix local.rebar --force
 RUN git clone https://github.com/filmor/ierl.git ierl \
@@ -165,8 +166,8 @@ RUN git clone https://github.com/filmor/ierl.git ierl \
     && mix deps.get \
     # Build lfe explicitly for now
     && (cd deps/lfe && ~/.mix/rebar3 compile) \
-    && env MIX_ENV=prod mix escript.build \
-    && cp ierl $HOME/.ierl/ierl.escript \
+    && (cd apps/ierl && env MIX_ENV=prod mix escript.build) \
+    && cp apps/ierl/ierl $HOME/.ierl/ierl.escript \
     && chmod +x $HOME/.ierl/ierl.escript \
     && $HOME/.ierl/ierl.escript install erlang --user \
     && $HOME/.ierl/ierl.escript install elixir --user \
@@ -176,11 +177,13 @@ RUN git clone https://github.com/filmor/ierl.git ierl \
 # Install .NET5
 ENV DOTNET_ROOT=/usr/share/dotnet
 ENV PATH=/usr/share/dotnet:/root/.dotnet/tools:$PATH
-RUN wget -O dotnet.tar.gz https://download.visualstudio.microsoft.com/download/pr/73a9cb2a-1acd-4d20-b864-d12797ca3d40/075dbe1dc3bba4aa85ca420167b861b6/dotnet-sdk-5.0.201-linux-x64.tar.gz \
-    && wget -O dotnet_runtime.tar.gz https://download.visualstudio.microsoft.com/download/pr/131d9f6b-0f49-474e-a7c5-33754d4e9195/52fae63c358d8e8e6211a50a64fe3dfd/aspnetcore-runtime-5.0.4-linux-x64.tar.gz \
-    && dotnet_sha512='099084cc7935482e363bd7802d2fdd909b3d72d2e9706e9ba4df95e3d142a28b780d2b85e5fb4662dcaad18e91c7e06519184fae981a521425eed605770c3c5a' \
+ENV DOTNET_SDK_VERSION=5.0.300
+ENV DOTNET_VERSION=5.0.6
+RUN wget -O dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/$DOTNET_SDK_VERSION/dotnet-sdk-$DOTNET_SDK_VERSION-linux-x64.tar.gz \
+    && wget -O dotnet_runtime.tar.gz https://dotnetcli.azureedge.net/dotnet/Runtime/$DOTNET_VERSION/dotnet-runtime-$DOTNET_VERSION-linux-x64.tar.gz \
+    && dotnet_sha512='724a8e6ed77d2d3b957b8e5eda82ca8c99152d8691d1779b4a637d9ff781775f983468ee46b0bc8ad0ddbfd9d537dd8decb6784f43edae72c9529a90767310d2' \
     && echo "$dotnet_sha512  dotnet.tar.gz" | sha512sum -c - \
-    && dotnet_runtime_sha512='6075649abf4f99ff19f472a3ce6290cf277e7620ab9e65a09d5884a265c50884d50496d6ceb70011b9caaad09ff8428a149cb0aa0b965a17f0a4f5f5e02b920c' \
+    && dotnet_runtime_sha512='7aece6b763305fcf6e47e31540830797670287622ec424e689967c8974f80cefdb04961fc8cdf23c67588f3b0804b5e8291f87b06b10f2fc83d48ce0b9700d38' \
     && echo "$dotnet_runtime_sha512  dotnet_runtime.tar.gz" | sha512sum -c - \
     && mkdir -p "/usr/share/dotnet" \
     && mkdir -p "/usr/bin/dotnet" \
