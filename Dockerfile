@@ -162,12 +162,12 @@ RUN git clone https://github.com/filmor/ierl.git ierl \
 # Install .NET5
 ENV DOTNET_ROOT=/usr/share/dotnet
 ENV DOTNET_SDK_VERSION=5.0.300
+ENV PATH=/usr/share/dotnet:/root/.dotnet/tools:$PATH
 COPY --from=dotnet-sdk ${DOTNET_ROOT} ${DOTNET_ROOT}
 RUN ln -s ${DOTNET_ROOT}/dotnet /usr/bin/dotnet \
     && dotnet help
 RUN dotnet tool install -g --add-source "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json" Microsoft.dotnet-interactive \
     && dotnet interactive jupyter install
-ENV PATH=/usr/share/dotnet:/root/.dotnet/tools:$PATH
 
 # ↓ 削除系ははまとめてここでやる    
 RUN conda clean --all \
