@@ -1,6 +1,7 @@
 # jupyter-langs:latest
 FROM golang:1.16.4-buster as golang
 FROM julia:1.6.1-buster as julia
+FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim-amd64 as dotnet-sdk
 
 FROM ghcr.io/heromo/jupyter-langs/python:latest
 LABEL Maintainer="HeRoMo"
@@ -176,26 +177,13 @@ RUN git clone https://github.com/filmor/ierl.git ierl \
 
 # Install .NET5
 ENV DOTNET_ROOT=/usr/share/dotnet
-ENV PATH=/usr/share/dotnet:/root/.dotnet/tools:$PATH
 ENV DOTNET_SDK_VERSION=5.0.300
-ENV DOTNET_VERSION=5.0.6
-RUN wget -O dotnet.tar.gz https://dotnetcli.azureedge.net/dotnet/Sdk/$DOTNET_SDK_VERSION/dotnet-sdk-$DOTNET_SDK_VERSION-linux-x64.tar.gz \
-    && wget -O dotnet_runtime.tar.gz https://dotnetcli.azureedge.net/dotnet/Runtime/$DOTNET_VERSION/dotnet-runtime-$DOTNET_VERSION-linux-x64.tar.gz \
-    && dotnet_sha512='724a8e6ed77d2d3b957b8e5eda82ca8c99152d8691d1779b4a637d9ff781775f983468ee46b0bc8ad0ddbfd9d537dd8decb6784f43edae72c9529a90767310d2' \
-    && echo "$dotnet_sha512  dotnet.tar.gz" | sha512sum -c - \
-    && dotnet_runtime_sha512='7aece6b763305fcf6e47e31540830797670287622ec424e689967c8974f80cefdb04961fc8cdf23c67588f3b0804b5e8291f87b06b10f2fc83d48ce0b9700d38' \
-    && echo "$dotnet_runtime_sha512  dotnet_runtime.tar.gz" | sha512sum -c - \
-    && mkdir -p "/usr/share/dotnet" \
-    && mkdir -p "/usr/bin/dotnet" \
-    && mkdir -p "/root/.dotnet/tools" \
-    && tar zxf dotnet.tar.gz -C "/usr/share/dotnet" \
-    && rm dotnet.tar.gz \
-    && tar zxf dotnet_runtime.tar.gz -C "/usr/share/dotnet" \
-    && rm dotnet_runtime.tar.gz \
-    && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet \
+COPY --from=dotnet-sdk ${DOTNET_ROOT} ${DOTNET_ROOT}
+RUN ln -s ${DOTNET_ROOT}/dotnet /usr/bin/dotnet \
     && dotnet help
 RUN dotnet tool install -g --add-source "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json" Microsoft.dotnet-interactive \
     && dotnet interactive jupyter install
+ENV PATH=/usr/share/dotnet:/root/.dotnet/tools:$PATH
 
 # ↓ 削除系ははまとめてここでやる    
 RUN conda clean --all \
