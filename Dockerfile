@@ -52,7 +52,7 @@ RUN julia --version
 RUN julia -e 'using Pkg; Pkg.add("IJulia")'
 
 # Install golang
-ENV GO_VERSION=1.17
+ENV GO_VERSION=1.16.5
 ENV GOPATH=/go
 ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
 COPY --from=golang /usr/local/go/ /usr/local/go/
