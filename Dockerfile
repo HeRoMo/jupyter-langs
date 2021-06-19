@@ -1,12 +1,16 @@
 # jupyter-langs:latest
-FROM golang:1.16.4-buster as golang
+
+# https://hub.docker.com/_/golang
+FROM golang:1.16.5-buster as golang
+# https://hub.docker.com/_/julia
 FROM julia:1.6.1-buster as julia
+# https://hub.docker.com/_/microsoft-dotnet-sdk
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim-amd64 as dotnet-sdk
 
 FROM ghcr.io/heromo/jupyter-langs/python:latest
 LABEL Maintainer="HeRoMo"
 LABEL Description="Jupyter lab for various languages"
-LABEL Version="5.7.1"
+LABEL Version="5.8.0"
 
 # Install SPARQL
 RUN pip install sparqlkernel && \
@@ -48,7 +52,7 @@ RUN julia --version
 RUN julia -e 'using Pkg; Pkg.add("IJulia")'
 
 # Install golang
-ENV GO_VERSION=1.16.4
+ENV GO_VERSION=1.17
 ENV GOPATH=/go
 ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
 COPY --from=golang /usr/local/go/ /usr/local/go/
@@ -65,9 +69,9 @@ RUN env GO111MODULE=off go get -d -u github.com/gopherdata/gophernotes \
 ENV RUSTUP_HOME=/usr/local/rustup
 ENV CARGO_HOME=/usr/local/cargo
 ENV PATH=/usr/local/cargo/bin:$PATH
-ENV RUST_VERSION=1.52.1
-ENV RUSTUP_VERSION=1.24.1
-ENV rustupSha256='fb3a7425e3f10d51f0480ac3cdb3e725977955b2ba21c9bdac35309563b115e8'
+ENV RUST_VERSION=1.53.0
+ENV RUSTUP_VERSION=1.24.3
+ENV rustupSha256='3dc5ef50861ee18657f9db2eeb7392f9c2a6c95c90ab41e45ab4ca71476b4338'
 RUN set -eux; \
     url="https://static.rust-lang.org/rustup/archive/${RUSTUP_VERSION}/x86_64-unknown-linux-gnu/rustup-init"; \
     wget "$url"; \
@@ -161,7 +165,7 @@ RUN git clone https://github.com/filmor/ierl.git ierl \
 
 # Install .NET5
 ENV DOTNET_ROOT=/usr/share/dotnet
-ENV DOTNET_SDK_VERSION=5.0.300
+ENV DOTNET_SDK_VERSION=5.0.301
 ENV PATH=/usr/share/dotnet:/root/.dotnet/tools:$PATH
 COPY --from=dotnet-sdk ${DOTNET_ROOT} ${DOTNET_ROOT}
 RUN ln -s ${DOTNET_ROOT}/dotnet /usr/bin/dotnet \
