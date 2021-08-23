@@ -1,16 +1,16 @@
 # jupyter-langs:latest
 
 # https://hub.docker.com/_/golang
-FROM golang:1.16.6-buster as golang
+FROM golang:1.17.0-buster as golang
 # https://hub.docker.com/_/julia
 FROM julia:1.6.2-buster as julia
 # https://hub.docker.com/_/microsoft-dotnet-sdk
-FROM mcr.microsoft.com/dotnet/sdk:5.0.302-buster-slim-amd64 as dotnet-sdk
+FROM mcr.microsoft.com/dotnet/sdk:5.0.400-buster-slim-amd64 as dotnet-sdk
 
-FROM ghcr.io/heromo/jupyter-langs/python:latest
+FROM ghcr.io/heromo/jupyter-langs/python:python-5.10.0
 LABEL Maintainer="HeRoMo"
 LABEL Description="Jupyter lab for various languages"
-LABEL Version="5.9.0"
+LABEL Version="5.10.0"
 
 # Install SPARQL
 RUN pip install sparqlkernel && \
@@ -42,17 +42,18 @@ RUN conda install --quiet --yes -c conda-forge \
             'r-tidyverse' \
             'unixodbc' \
             'r-tidymodels' \
-            'r-e1071'
+            'r-e1071' \
+            'r-plotly'
 
 # Install Julia
 ENV JULIA_PATH /usr/local/julia
 ENV PATH ${JULIA_PATH}/bin:$PATH
 COPY --from=julia ${JULIA_PATH} ${JULIA_PATH}
 RUN julia --version
-RUN julia -e 'using Pkg; Pkg.add("IJulia")'
+RUN julia -e 'using Pkg; Pkg.add("IJulia"); Pkg.add("DataFrames"); Pkg.add("CSV"); Pkg.add("Colors"); Pkg.add("ColorSchemes"); Pkg.add("PlotlyJS");'
 
 # Install golang
-ENV GO_VERSION=1.16.6
+ENV GO_VERSION=1.17.0
 ENV GOPATH=/go
 ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
 COPY --from=golang /usr/local/go/ /usr/local/go/
@@ -165,7 +166,7 @@ RUN git clone https://github.com/filmor/ierl.git ierl \
 
 # Install .NET5
 ENV DOTNET_ROOT=/usr/share/dotnet
-ENV DOTNET_SDK_VERSION=5.0.302
+ENV DOTNET_SDK_VERSION=5.0.400
 ENV PATH=/usr/share/dotnet:/root/.dotnet/tools:$PATH
 COPY --from=dotnet-sdk ${DOTNET_ROOT} ${DOTNET_ROOT}
 RUN ln -s ${DOTNET_ROOT}/dotnet /usr/bin/dotnet \
