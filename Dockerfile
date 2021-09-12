@@ -1,16 +1,16 @@
 # jupyter-langs:latest
 
 # https://hub.docker.com/_/golang
-FROM golang:1.17.0-buster as golang
+FROM golang:1.17.1-buster as golang
 # https://hub.docker.com/_/julia
 FROM julia:1.6.2-buster as julia
 # https://hub.docker.com/_/microsoft-dotnet-sdk
 FROM mcr.microsoft.com/dotnet/sdk:5.0.400-buster-slim-amd64 as dotnet-sdk
 
-FROM ghcr.io/heromo/jupyter-langs/python:python-5.10.0
+FROM ghcr.io/heromo/jupyter-langs/python:python-5.11.0
 LABEL Maintainer="HeRoMo"
 LABEL Description="Jupyter lab for various languages"
-LABEL Version="5.10.0"
+LABEL Version="5.11.0"
 
 # Install SPARQL
 RUN pip install sparqlkernel && \
@@ -53,7 +53,7 @@ RUN julia --version
 RUN julia -e 'using Pkg; Pkg.add("IJulia"); Pkg.add("DataFrames"); Pkg.add("CSV"); Pkg.add("Colors"); Pkg.add("ColorSchemes"); Pkg.add("PlotlyJS");'
 
 # Install golang
-ENV GO_VERSION=1.17.0
+ENV GO_VERSION=1.17.1
 ENV GOPATH=/go
 ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
 COPY --from=golang /usr/local/go/ /usr/local/go/
@@ -70,7 +70,7 @@ RUN env GO111MODULE=off go get -d -u github.com/gopherdata/gophernotes \
 ENV RUSTUP_HOME=/usr/local/rustup
 ENV CARGO_HOME=/usr/local/cargo
 ENV PATH=/usr/local/cargo/bin:$PATH
-ENV RUST_VERSION=1.54.0
+ENV RUST_VERSION=1.55.0
 ENV RUSTUP_VERSION=1.24.3
 ENV rustupSha256='3dc5ef50861ee18657f9db2eeb7392f9c2a6c95c90ab41e45ab4ca71476b4338'
 RUN set -eux; \
