@@ -21,7 +21,7 @@ Docker images of Jupyter Lab for various languages.
 | [Powershell](https://docs.microsoft.com/en-us/powershell/)(.Net5) | 7.1.4 | [.NET Interactive](https://github.com/dotnet/interactive)|
 | [R](https://www.r-project.org/) |4.1.1|[IRKernel](http://irkernel.github.io/)|
 | [Ruby](https://www.ruby-lang.org/en/) | 3.0.2 |[IRuby](https://github.com/SciRuby/iruby)|
-| [Rust](https://www.rust-lang.org/) |1.54.0|[EvCxR Jupyter Kernel](https://github.com/google/evcxr/tree/master/evcxr_jupyter)|
+| [Rust](https://www.rust-lang.org/) |1.55.0|[EvCxR Jupyter Kernel](https://github.com/google/evcxr/tree/master/evcxr_jupyter)|
 | [Scala](https://www.scala-lang.org/) |2.13.4|[almond](https://github.com/almond-sh/almond)|
 | Sparql||[SPARQL kernel](https://github.com/paulovn/sparql-kernel)|
 | [Typescript](https://www.typescriptlang.org/) | 4.4.3 | [tslab](https://github.com/yunabe/tslab)|
