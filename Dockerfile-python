@@ -1,14 +1,14 @@
 # jupyter-langs:python
 
 # https://hub.docker.com/_/node
-FROM node:16.7.0-buster-slim as nodejs 
+FROM node:16.9.0-buster-slim as nodejs 
 
 # https://hub.docker.com/r/continuumio/miniconda3
 FROM continuumio/miniconda3:4.10.3
 
 LABEL Maintainer="HeRoMo"
 LABEL Description="Jupyter lab for Python3 and Javascript"
-LABEL Version="5.10.0"
+LABEL Version="5.11.0"
 
 ENV HOME=/root
 ENV NOTEBOOK_DIR=/jupyter/notebooks
@@ -55,9 +55,9 @@ RUN conda install -y -c conda-forge  \
                 matplotlib \
                 tensorflow \
                 keras \
-                jupyterlab=3.0 \
+                jupyterlab>=3.0 \
                 libiconv \
-                ipywidgets=7.6 \
+                ipywidgets>=7.6 \
                 ipyleaflet \
                 # for dash
                 plotly \
