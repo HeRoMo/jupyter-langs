@@ -1,3 +1,6 @@
 .DS_Store
 .ipynb_checkpoints
 notebooks/log
+notebooks/.metals
+notebooks/.vscode
+

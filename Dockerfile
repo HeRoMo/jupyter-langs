@@ -5,12 +5,12 @@ FROM golang:1.17.1-buster as golang
 # https://hub.docker.com/_/julia
 FROM julia:1.6.2-buster as julia
 # https://hub.docker.com/_/microsoft-dotnet-sdk
-FROM mcr.microsoft.com/dotnet/sdk:5.0.400-buster-slim-amd64 as dotnet-sdk
+FROM mcr.microsoft.com/dotnet/sdk:5.0.401-buster-slim-amd64 as dotnet-sdk
 
-FROM ghcr.io/heromo/jupyter-langs/python:python-5.11.0
+FROM ghcr.io/heromo/jupyter-langs/python:5.12.0
 LABEL Maintainer="HeRoMo"
 LABEL Description="Jupyter lab for various languages"
-LABEL Version="5.11.0"
+LABEL Version="5.12.0"
 
 # Install SPARQL
 RUN pip install sparqlkernel && \
@@ -66,7 +66,7 @@ RUN env GO111MODULE=off go get -d -u github.com/gopherdata/gophernotes \
     && chmod +w ./kernel.json \
     && sed "s|gophernotes|$(go env GOPATH)/bin/gophernotes|" < kernel.json.in > kernel.json
 
-# Install Rust 
+# Install Rust https://www.rust-lang.org/
 ENV RUSTUP_HOME=/usr/local/rustup
 ENV CARGO_HOME=/usr/local/cargo
 ENV PATH=/usr/local/cargo/bin:$PATH
@@ -87,7 +87,7 @@ RUN set -eux; \
 RUN cargo install evcxr_jupyter \
     && evcxr_jupyter --install
 
-# Install Ruby
+# Install Ruby https://www.ruby-lang.org
 ENV RUBY_VERSION=3.0.2
 ENV RUBY_HOME=/opt/ruby
 RUN apt-get update -y \
@@ -166,7 +166,7 @@ RUN git clone https://github.com/filmor/ierl.git ierl \
 
 # Install .NET5
 ENV DOTNET_ROOT=/usr/share/dotnet
-ENV DOTNET_SDK_VERSION=5.0.400
+ENV DOTNET_SDK_VERSION=5.0.401
 ENV PATH=/usr/share/dotnet:/root/.dotnet/tools:$PATH
 COPY --from=dotnet-sdk ${DOTNET_ROOT} ${DOTNET_ROOT}
 RUN ln -s ${DOTNET_ROOT}/dotnet /usr/bin/dotnet \
