@@ -3,7 +3,7 @@ services:
   jupyter:
     image: ghcr.io/heromo/jupyter-langs:latest
     volumes:
-      - ../notebooks:/jupyter/notebooks:cached
+      - ./notebooks:/jupyter/notebooks:cached
     ports:
       - 8050:8050 # for Dash
       - 8888:8888 # for Jupyterlab
