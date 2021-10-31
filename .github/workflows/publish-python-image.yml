@@ -31,7 +31,9 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/python
-          tags: type=match,pattern=python-(.*),group=1
+          tags: |
+            type=ref,event=branch
+            type=match,pattern=python-(.*),group=1
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
