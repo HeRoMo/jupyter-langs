@@ -97,8 +97,7 @@ RUN jupyter labextension install \
             @jupyter-widgets/jupyterlab-manager \
             jupyterlab-plotly \
             plotlywidget \
-            jupyter-leafle \
-            jupyterlab-git
+            jupyter-leaflet
 
 # for JupyterLab
 EXPOSE 8888
