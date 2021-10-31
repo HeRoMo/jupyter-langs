@@ -1,14 +1,15 @@
 # jupyter-langs:python
 
 # https://hub.docker.com/_/node
-FROM node:16.9.1-buster-slim as nodejs 
+ARG node_version=17.0.1
+FROM node:${node_version}-buster-slim as nodejs 
 
 # https://hub.docker.com/r/continuumio/miniconda3
 FROM continuumio/miniconda3:4.10.3
 
 LABEL Maintainer="HeRoMo"
 LABEL Description="Jupyter lab for Python3 and Javascript"
-LABEL Version="5.12.0"
+LABEL Version="5.13.0"
 
 ENV HOME=/root
 ENV NOTEBOOK_DIR=/jupyter/notebooks
@@ -55,7 +56,7 @@ RUN conda install -y -c conda-forge  \
                 matplotlib \
                 tensorflow \
                 keras \
-                jupyterlab>=3.0 \
+                jupyterlab>=3.2 \
                 libiconv \
                 ipywidgets>=7.6 \
                 ipyleaflet \
@@ -76,8 +77,8 @@ COPY conf/matplotlibrc $MATPLOTLIBRC/matplotlibrc
 COPY conf/jupyter_notebook_config.py $JUPYTER_DIR/jupyter_notebook_config.py
 
 # Install Javascript
-ENV NODE_VERSION 16.7.0
-ENV YARN_VERSION 1.22.5
+ENV NODE_VERSION ${node_version}
+ENV YARN_VERSION 1.22.15
 RUN mkdir -p /opt
 COPY --from=nodejs /opt/yarn-v${YARN_VERSION} /opt/yarn
 COPY --from=nodejs /usr/local/bin/node /usr/local/bin/
@@ -96,7 +97,8 @@ RUN jupyter labextension install \
             @jupyter-widgets/jupyterlab-manager \
             jupyterlab-plotly \
             plotlywidget \
-            jupyter-leaflet
+            jupyter-leafle \
+            jupyterlab-git
 
 # for JupyterLab
 EXPOSE 8888
