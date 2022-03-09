@@ -6,8 +6,8 @@ on:
       - upgrade-python-and-nodejs
     tags:
       - 'python-[0-9]+.[0-9]+.[0-9]+'
-    paths:
-      - Dockerfile-python
+    # paths:
+    #   - Dockerfile-python
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
