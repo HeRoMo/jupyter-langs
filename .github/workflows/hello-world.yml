@@ -1,0 +1,13 @@
+name: Hello World
+on:
+  pull_request:
+    types: [opened, synchronize]
+jobs:
+  hello-world:
+    runs-on: X64
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - run: echo "hello-world"
+      - run: uname -a
