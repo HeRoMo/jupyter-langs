@@ -14,7 +14,9 @@ env:
 jobs:
   build-and-push-image:
     name: Push Docker image to GitHub Container Registry
-    runs-on: ubuntu-latest
+    # runs-on: ubuntu-latest
+    runs-on: X64
+    timeout-minutes: 120
     permissions:
       contents: read
       packages: write
@@ -44,7 +46,8 @@ jobs:
         with:
           context: .
           file: Dockerfile
-          platforms: linux/amd64,linux/arm64
+          # platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
