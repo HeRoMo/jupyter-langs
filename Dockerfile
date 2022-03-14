@@ -12,7 +12,7 @@ FROM julia:${JULIA_VERSION}-bullseye as julia
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION}-bullseye-slim as dotnet-sdk
 
 FROM ghcr.io/heromo/jupyter-langs/python:5.14.0
-LABEL Maintainer="HeRoMo"
+LABEL maintainer="HeRoMo"
 LABEL Description="Jupyter lab for various languages"
 LABEL Version="5.14.0"
 

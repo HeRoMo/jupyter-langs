@@ -14,8 +14,14 @@ env:
 jobs:
   build-and-push-image:
     name: Push Docker image to GitHub Container Registry
-    # runs-on: ubuntu-latest
-    runs-on: ARM64
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: X64
+          - platform: linux/arm64
+            runner: ARM64
     timeout-minutes: 120
     permissions:
       contents: read
@@ -46,8 +52,7 @@ jobs:
         with:
           context: .
           file: Dockerfile
-          # platforms: linux/amd64,linux/arm64
-          platforms: linux/arm64
+          platforms: ${{ matrix.platform }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
