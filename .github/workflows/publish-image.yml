@@ -55,4 +55,5 @@ jobs:
           platforms: ${{ matrix.platform }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
+          flavor: suffix=-${{ matrix.runner }}
           labels: ${{ steps.meta.outputs.labels }}
