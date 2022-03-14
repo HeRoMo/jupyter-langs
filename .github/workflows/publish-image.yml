@@ -44,6 +44,7 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          flavor: suffix=-${{ matrix.runner }}
           tags: |
             type=ref,event=branch
             type=match,pattern=\d.\d.\d,group=0
@@ -55,5 +56,4 @@ jobs:
           platforms: ${{ matrix.platform }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          flavor: suffix=-${{ matrix.runner }}
           labels: ${{ steps.meta.outputs.labels }}
