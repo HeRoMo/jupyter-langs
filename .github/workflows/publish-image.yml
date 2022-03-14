@@ -19,8 +19,10 @@ jobs:
       matrix:
         include:
           - platform: linux/amd64
+            suffix: amd64
             runner: X64
           - platform: linux/arm64
+            suffix: arm64
             runner: ARM64
     timeout-minutes: 120
     permissions:
@@ -44,7 +46,7 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          flavor: suffix=-${{ matrix.runner }}
+          flavor: suffix=-${{ matrix.suffix }}
           tags: |
             type=ref,event=branch
             type=match,pattern=\d.\d.\d,group=0
@@ -57,3 +59,26 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+  create-manifest:
+    name: Create Multi Platform Image create-manifest
+    runs-on: ubuntu-latest
+    needs: build-and-push-image
+    steps:
+      - uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=match,pattern=\d.\d.\d,group=0
+      - run: |
+          docker manifest create ${{ steps.meta.outputs.tags }} \
+          --amend ${{ steps.meta.outputs.tags }}-amd64 \
+          --amend ${{ steps.meta.outputs.tags }}-arm64
+      - run: docker manifest push ${{ steps.meta.outputs.tags }}
