@@ -1,0 +1,12 @@
+version: 2
+updates:
+- package-ecosystem: github-actions
+  directory: "/"
+  schedule:
+    interval: weekly
+    day: friday
+    time: "15:00"
+    timezone: "Asia/Tokyo"
+  assignees:
+    - HeRoMo
+  open-pull-requests-limit: 20
