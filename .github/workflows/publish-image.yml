@@ -83,8 +83,5 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - run: |
-          docker manifest create ${{ matrix.tags }} \
-          --amend ${{ matrix.tags }}-amd64 \
-          --amend ${{ matrix.tags }}-arm64
+      - run: docker manifest create ${{ matrix.tags }} ${{ matrix.tags }}-amd64 ${{ matrix.tags }}-arm64
       - run: docker manifest push ${{ matrix.tags }}
