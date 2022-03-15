@@ -1,20 +1,20 @@
 # jupyter-langs:latest
 
-ARG GOLANG_VERSION=1.17.2
-ARG JULIA_VERSION=1.7.0
-ARG DOTNET_SDK_VERSION=5.0.402
+ARG GOLANG_VERSION=1.17.8
+ARG JULIA_VERSION=1.7.2
+ARG DOTNET_SDK_VERSION=6.0.201
 
 # https://hub.docker.com/_/golang
-FROM golang:${GOLANG_VERSION}-buster as golang
+FROM golang:${GOLANG_VERSION}-bullseye as golang
 # https://hub.docker.com/_/julia
-FROM julia:${JULIA_VERSION}-buster as julia
+FROM julia:${JULIA_VERSION}-bullseye as julia
 # https://hub.docker.com/_/microsoft-dotnet-sdk
-FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION}-buster-slim-amd64 as dotnet-sdk
+FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION}-bullseye-slim as dotnet-sdk
 
-FROM ghcr.io/heromo/jupyter-langs/python:5.13.0
-LABEL Maintainer="HeRoMo"
+FROM ghcr.io/heromo/jupyter-langs/python:5.14.0
+LABEL maintainer="HeRoMo"
 LABEL Description="Jupyter lab for various languages"
-LABEL Version="5.13.0"
+LABEL Version="5.14.0"
 
 # Install SPARQL
 RUN pip install sparqlkernel && \
@@ -26,11 +26,12 @@ RUN apt-get update && \
     unixodbc \
     unixodbc-dev \
     r-cran-rodbc
-RUN conda install --quiet --yes -c conda-forge \
+RUN mamba install --quiet --yes -c conda-forge \
             'r-base>=4.1' \
             'r-caret' \
             'r-crayon' \
-            'r-devtools' \
+            # 'r-devtools' \
+            'r-e1071' \
             'r-forecast' \
             'r-hexbin' \
             'r-htmltools' \
@@ -39,14 +40,12 @@ RUN conda install --quiet --yes -c conda-forge \
             'r-nycflights13' \
             'r-randomforest' \
             'r-rcurl' \
-            'r-rmarkdown' \
             'r-rodbc' \
             'r-rsqlite' \
             'r-shiny' \
-            'r-tidyverse' \
+            'rpy2' \
             'unixodbc' \
-            'r-tidymodels' \
-            'r-e1071' \
+            'r-markdown' \
             'r-plotly'
 
 # Install Julia
@@ -74,11 +73,16 @@ RUN env GO111MODULE=off go get -d -u github.com/gopherdata/gophernotes \
 ENV RUSTUP_HOME=/usr/local/rustup
 ENV CARGO_HOME=/usr/local/cargo
 ENV PATH=/usr/local/cargo/bin:$PATH
-ENV RUST_VERSION=1.56.0
+ENV RUST_VERSION=1.59.0
 ENV RUSTUP_VERSION=1.24.3
-ENV rustupSha256='3dc5ef50861ee18657f9db2eeb7392f9c2a6c95c90ab41e45ab4ca71476b4338'
 RUN set -eux; \
-    url="https://static.rust-lang.org/rustup/archive/${RUSTUP_VERSION}/x86_64-unknown-linux-gnu/rustup-init"; \
+    dpkgArch="$(dpkg --print-architecture)"; \
+    case "${dpkgArch##*-}" in \
+        amd64) rustArch='x86_64-unknown-linux-gnu'; rustupSha256='3dc5ef50861ee18657f9db2eeb7392f9c2a6c95c90ab41e45ab4ca71476b4338' ;; \
+        arm64) rustArch='aarch64-unknown-linux-gnu'; rustupSha256='32a1532f7cef072a667bac53f1a5542c99666c4071af0c9549795bbdb2069ec1' ;; \
+        *) echo >&2 "unsupported architecture: ${dpkgArch}"; exit 1 ;; \
+    esac; \
+    url="https://static.rust-lang.org/rustup/archive/${RUSTUP_VERSION}/${rustArch}/rustup-init"; \
     wget "$url"; \
     echo "${rustupSha256} *rustup-init" | sha256sum -c -; \
     chmod +x rustup-init; \
@@ -92,7 +96,7 @@ RUN cargo install evcxr_jupyter \
     && evcxr_jupyter --install
 
 # Install Ruby https://www.ruby-lang.org
-ENV RUBY_VERSION=3.0.2
+ENV RUBY_VERSION=3.1.1
 ENV RUBY_HOME=/opt/ruby
 RUN apt-get update -y \
     && apt-get install  -y --no-install-recommends \
@@ -133,12 +137,12 @@ RUN gem install --no-document \
 
 # Install JVM languages
 ## Java
-RUN conda install --quiet --yes -c conda-forge \
-            'scijava-jupyter-kernel'
+RUN mamba install --quiet --yes -c conda-forge 'openjdk' \
+    && git clone https://github.com/SpencerPark/IJava.git && cd IJava/ \
+    && ./gradlew installKernel
 ## Kotlin
-RUN conda install --quiet --yes -c jetbrains \
-            'kotlin-jupyter-kernel'
-## Scala
+RUN mamba install --quiet --yes -c jetbrains 'kotlin-jupyter-kernel'
+## Scala 
 RUN curl -Lo coursier https://git.io/coursier-cli \
     && chmod +x coursier \
     && ./coursier launch --fork almond:0.11.1 -- --install \
@@ -151,7 +155,7 @@ RUN wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb \
 RUN apt-get update; exit 0
 RUN apt-get install  -y --no-install-recommends \
         erlang \
-        elixir
+        elixir=1.12.2-1 # workarond for filmor/ierl
 RUN mix local.hex --force \
     && mix local.rebar --force
 RUN git clone https://github.com/filmor/ierl.git ierl \
@@ -179,7 +183,7 @@ RUN dotnet tool install -g --add-source "https://pkgs.dev.azure.com/dnceng/publi
     && dotnet interactive jupyter install
 
 # ↓ 削除系ははまとめてここでやる    
-RUN conda clean --all \
+RUN mamba clean --all \
     && apt-get autoremove \
     && apt-get clean \
     && apt-get autoclean \
