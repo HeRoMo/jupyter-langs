@@ -80,7 +80,7 @@ jobs:
     needs: create-tags
     strategy:
       matrix: 
-        tags: ${{ needs.create-tags.outputs.tags }}
+        tags: ${{ fromJSON(needs.create-tags.outputs.tags) }}
     steps:
       - uses: docker/login-action@v1
         with:
