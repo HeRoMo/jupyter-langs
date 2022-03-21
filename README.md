@@ -15,7 +15,7 @@ Docker images of Jupyter Lab for various languages.
 | [F#](https://fsharp.org/)(.Net5) | 6.0.3 | [.NET Interactive](https://github.com/dotnet/interactive)|
 | [Go](https://golang.org/) |1.17.8|[Gophernotes](https://github.com/gopherdata/gophernotes)|
 | [Java](https://openjdk.java.net/) |11.0.9.1|[SciJava Jupyter Kernel](https://github.com/hadim/scijava-jupyter-kernel)|
-| JavaScript([Node.js](https://nodejs.org/en/))|17.6.0|[tslab](https://github.com/yunabe/tslab)|
+| JavaScript([Node.js](https://nodejs.org/en/))|17.7.2|[tslab](https://github.com/yunabe/tslab)|
 | [Julia](https://julialang.org/) |1.7.2|[IJulia](https://github.com/JuliaLang/IJulia.jl)|
 | [Kotlin](https://kotlinlang.org/) |1.7.0|[jupyter\-kotlin](https://github.com/ligee/kotlin-jupyter)|
 | [Powershell](https://docs.microsoft.com/en-us/powershell/)(.Net6) | 7.2.1 | [.NET Interactive](https://github.com/dotnet/interactive)|
