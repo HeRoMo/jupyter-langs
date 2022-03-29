@@ -1,20 +1,20 @@
 # jupyter-langs:latest
 
-ARG GOLANG_VERSION=1.17.8
+ARG GOLANG_VERSION=1.18.0
 ARG JULIA_VERSION=1.7.2
 ARG DOTNET_SDK_VERSION=6.0.201
 
 # https://hub.docker.com/_/golang
-FROM golang:${GOLANG_VERSION}-bullseye as golang
+FROM golang:${GOLANG_VERSION}-buster as golang
 # https://hub.docker.com/_/julia
-FROM julia:${JULIA_VERSION}-bullseye as julia
+FROM julia:${JULIA_VERSION}-buster as julia
 # https://hub.docker.com/_/microsoft-dotnet-sdk
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION}-bullseye-slim as dotnet-sdk
 
-FROM ghcr.io/heromo/jupyter-langs/python:5.14.0
+FROM ghcr.io/heromo/jupyter-langs/python:5.15.1
 LABEL maintainer="HeRoMo"
 LABEL Description="Jupyter lab for various languages"
-LABEL Version="5.14.0"
+LABEL Version="5.15.0"
 
 # Install SPARQL
 RUN pip install sparqlkernel && \
