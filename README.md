@@ -13,7 +13,7 @@ Docker images of Jupyter Lab for various languages.
 | [Elixir](https://elixir-lang.org/) |1.12.2|[ierl](https://github.com/filmor/ierl)|
 | [Erlang](https://www.erlang.org/) |OTP 24.0.4|[ierl](https://github.com/filmor/ierl)|
 | [F#](https://fsharp.org/)(.Net5) | 6.0.3 | [.NET Interactive](https://github.com/dotnet/interactive)|
-| [Go](https://golang.org/) |1.17.8|[Gophernotes](https://github.com/gopherdata/gophernotes)|
+| [Go](https://golang.org/) |1.18.0|[Gophernotes](https://github.com/gopherdata/gophernotes)|
 | [Java](https://openjdk.java.net/) |11.0.9.1|[SciJava Jupyter Kernel](https://github.com/hadim/scijava-jupyter-kernel)|
 | JavaScript([Node.js](https://nodejs.org/en/))|17.7.2|[tslab](https://github.com/yunabe/tslab)|
 | [Julia](https://julialang.org/) |1.7.2|[IJulia](https://github.com/JuliaLang/IJulia.jl)|
