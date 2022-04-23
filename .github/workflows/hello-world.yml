@@ -1,0 +1,15 @@
+name: Hello World
+on:
+  push:
+    branches:
+      - test-workflow
+jobs:
+  hello-world:
+    runs-on: self-hosted
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - run: echo "hello-world"
+      - run: uname -a
+      - run: sleep 60
