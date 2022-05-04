@@ -12,4 +12,4 @@ jobs:
     steps:
       - run: echo "hello-world"
       - run: uname -a
-      - run: sleep 60
+      - run: lscpu
