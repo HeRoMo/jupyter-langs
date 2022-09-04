@@ -1,16 +1,17 @@
 # jupyter-langs:python
 
 # https://hub.docker.com/_/node
-ARG node_version=17.7.2
-FROM node:${node_version}-buster-slim as nodejs 
+
+ARG node_version=18.8.0
+FROM node:${node_version}-bullseye-slim as nodejs 
 
 # https://hub.docker.com/r/continuumio/miniconda3
 # https://github.com/ContinuumIO/docker-images/blob/master/miniconda3/debian/Dockerfile
-FROM continuumio/miniconda3:4.10.3
+FROM continuumio/miniconda3:4.12.0
 
 LABEL maintainer="HeRoMo"
 LABEL Description="Jupyter lab for Python3 and Javascript"
-LABEL Version="5.15.1"
+LABEL Version="5.16.0"
 
 ENV HOME=/root
 ENV NOTEBOOK_DIR=/jupyter/notebooks
@@ -51,16 +52,16 @@ RUN conda install -c conda-forge mamba -y
 # Install Jupyter
 RUN mamba update -c conda-forge --all
 RUN mamba install -y -c conda-forge  \
-                python=3.10.0 \
+                python=3.10.6 \
                 pandas \
                 scipy \
                 bokeh \
                 matplotlib \
                 # tensorflow \
                 keras \
-                jupyterlab>=3.2 \
+                jupyterlab>=3.4 \
                 libiconv \
-                ipywidgets>=7.6 \
+                ipywidgets>=8.0 \
                 ipyleaflet \
                 # for dash
                 plotly \
@@ -80,7 +81,7 @@ COPY conf/jupyter_notebook_config.py $JUPYTER_DIR/jupyter_notebook_config.py
 
 # Install Javascript
 ENV NODE_VERSION ${node_version}
-ENV YARN_VERSION 1.22.17
+ENV YARN_VERSION 1.22.19
 RUN mkdir -p /opt
 COPY --from=nodejs /opt/yarn-v${YARN_VERSION} /opt/yarn
 COPY --from=nodejs /usr/local/bin/node /usr/local/bin/
