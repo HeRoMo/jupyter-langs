@@ -1,20 +1,20 @@
 # jupyter-langs:latest
 
-ARG GOLANG_VERSION=1.18.0
-ARG JULIA_VERSION=1.7.2
-ARG DOTNET_SDK_VERSION=6.0.201
+ARG GOLANG_VERSION=1.19.0
+ARG JULIA_VERSION=1.8.0
+ARG DOTNET_SDK_VERSION=6.0.400-1
 
 # https://hub.docker.com/_/golang
-FROM golang:${GOLANG_VERSION}-buster as golang
+FROM golang:${GOLANG_VERSION}-bullseye as golang
 # https://hub.docker.com/_/julia
-FROM julia:${JULIA_VERSION}-buster as julia
+FROM julia:${JULIA_VERSION}-bullseye as julia
 # https://hub.docker.com/_/microsoft-dotnet-sdk
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION}-bullseye-slim as dotnet-sdk
 
-FROM ghcr.io/heromo/jupyter-langs/python:5.15.1
+FROM ghcr.io/heromo/jupyter-langs/python:5.16.0
 LABEL maintainer="HeRoMo"
 LABEL Description="Jupyter lab for various languages"
-LABEL Version="5.15.0"
+LABEL Version="5.16.0"
 
 # Install SPARQL
 RUN pip install sparqlkernel && \
@@ -27,7 +27,7 @@ RUN apt-get update && \
     unixodbc-dev \
     r-cran-rodbc
 RUN mamba install --quiet --yes -c conda-forge \
-            'r-base>=4.1' \
+            'r-base>=4.2' \
             'r-caret' \
             'r-crayon' \
             # 'r-devtools' \
@@ -73,8 +73,8 @@ RUN env GO111MODULE=off go get -d -u github.com/gopherdata/gophernotes \
 ENV RUSTUP_HOME=/usr/local/rustup
 ENV CARGO_HOME=/usr/local/cargo
 ENV PATH=/usr/local/cargo/bin:$PATH
-ENV RUST_VERSION=1.59.0
-ENV RUSTUP_VERSION=1.24.3
+ENV RUST_VERSION=1.63.0
+ENV RUSTUP_VERSION=1.25.1
 RUN set -eux; \
     dpkgArch="$(dpkg --print-architecture)"; \
     case "${dpkgArch##*-}" in \
@@ -96,7 +96,7 @@ RUN cargo install evcxr_jupyter \
     && evcxr_jupyter --install
 
 # Install Ruby https://www.ruby-lang.org
-ENV RUBY_VERSION=3.1.1
+ENV RUBY_VERSION=3.1.2
 ENV RUBY_HOME=/opt/ruby
 RUN apt-get update -y \
     && apt-get install  -y --no-install-recommends \
@@ -155,7 +155,7 @@ RUN wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb \
 RUN apt-get update; exit 0
 RUN apt-get install  -y --no-install-recommends \
         erlang \
-        elixir=1.12.2-1 # workarond for filmor/ierl
+        elixir #=1.12.2-1 # workarond for filmor/ierl
 RUN mix local.hex --force \
     && mix local.rebar --force
 RUN git clone https://github.com/filmor/ierl.git ierl \
