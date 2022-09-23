@@ -8,6 +8,9 @@ ARG DOTNET_SDK_VERSION=6.0.400-1
 FROM golang:${GOLANG_VERSION}-bullseye as golang
 # https://hub.docker.com/_/julia
 FROM julia:${JULIA_VERSION}-bullseye as julia
+# https://hub.docker.com/_/erlang
+# https://hub.docker.com/_/elixir
+FROM elixir:1.12.3-slim as elixir
 # https://hub.docker.com/_/microsoft-dotnet-sdk
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION}-bullseye-slim as dotnet-sdk
 
@@ -145,27 +148,32 @@ RUN ln -s ${DOTNET_ROOT}/dotnet /usr/bin/dotnet \
 RUN dotnet tool install -g --add-source "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json" Microsoft.dotnet-interactive \
     && dotnet interactive jupyter install
 
-# Install JVM languages
-## Java
-RUN mamba install --quiet --yes -c conda-forge 'openjdk' \
-    && git clone https://github.com/SpencerPark/IJava.git && cd IJava/ \
-    && ./gradlew installKernel
-## Kotlin
-RUN mamba install --quiet --yes -c jetbrains 'kotlin-jupyter-kernel'
-## Scala 
-RUN curl -Lo coursier https://git.io/coursier-cli \
-    && chmod +x coursier \
-    && ./coursier launch --fork almond:0.11.1 -- --install \
-    && rm -f coursier
-
 # Install Erlang and Elixir
-RUN wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb \
-    && dpkg -i erlang-solutions_2.0_all.deb \
-    && rm -f erlang-solutions_2.0_all.deb
-RUN apt-get update; exit 0
-RUN apt-get install  -y --no-install-recommends \
-        erlang \
-        elixir #=1.12.2-1 # workarond for filmor/ierl
+COPY --from=elixir /usr/local/lib/erlang /usr/local/lib/erlang
+COPY --from=elixir /usr/local/lib/elixir /usr/local/lib/elixir
+COPY --from=elixir /usr/local/bin/rebar3 /usr/local/bin/rebar3
+
+RUN runtimeDeps=' \
+		libodbc1 \
+		libssl1.1 \
+		libsctp1 \
+	' \
+	&& apt-get update \
+    && apt-get install -y --no-install-recommends $runtimeDeps
+
+RUN ln -s /usr/local/lib/erlang/bin/ct_run /usr/local/bin/ct_run \
+    && ln -s /usr/local/lib/erlang/bin/dialyzer /usr/local/bin/dialyzer \
+    && ln -s /usr/local/lib/erlang/bin/epmd /usr/local/bin/epmd \
+    && ln -s /usr/local/lib/erlang/bin/erl /usr/local/bin/erl \
+    && ln -s /usr/local/lib/erlang/bin/erlc /usr/local/bin/erlc \
+    && ln -s /usr/local/lib/erlang/bin/escript /usr/local/bin/escript \
+    && ln -s /usr/local/lib/erlang/bin/run_erl /usr/local/bin/run_erl \
+    && ln -s /usr/local/lib/erlang/bin/to_erl /usr/local/bin/to_erl \
+    && ln -s /usr/local/lib/erlang/bin/typer /usr/local/bin/typer \
+    && ln -s /usr/local/lib/elixir/bin/elixir /usr/local/bin/elixir \
+    && ln -s /usr/local/lib/elixir/bin/elixirc /usr/local/bin/elixirc \
+    && ln -s /usr/local/lib/elixir/bin/iex /usr/local/bin/iex \
+    && ln -s /usr/local/lib/elixir/bin/mix /usr/local/bin/mix
 RUN mix local.hex --force \
     && mix local.rebar --force
 RUN git clone https://github.com/filmor/ierl.git ierl \
@@ -182,6 +190,18 @@ RUN git clone https://github.com/filmor/ierl.git ierl \
     && cd .. \
     && rm -rf ierl
 
+# # Install JVM languages
+# ## Java
+# RUN mamba install --quiet --yes -c conda-forge 'openjdk' \
+#     && git clone https://github.com/SpencerPark/IJava.git && cd IJava/ \
+#     && ./gradlew installKernel
+# ## Kotlin
+# RUN mamba install --quiet --yes -c jetbrains 'kotlin-jupyter-kernel'
+# ## Scala 
+# RUN curl -Lo coursier https://git.io/coursier-cli \
+#     && chmod +x coursier \
+#     && ./coursier launch --fork almond:0.11.1 -- --install \
+#     && rm -f coursier
 
 # ↓ 削除系ははまとめてここでやる    
 RUN mamba clean --all \
