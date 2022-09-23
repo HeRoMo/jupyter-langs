@@ -1,6 +1,6 @@
 # jupyter-langs:latest
 
-ARG GOLANG_VERSION=1.19.0
+ARG GOLANG_VERSION=1.19.1
 ARG JULIA_VERSION=1.8.0
 ARG DOTNET_SDK_VERSION=6.0.400-1
 
@@ -27,7 +27,7 @@ RUN apt-get update && \
     unixodbc-dev \
     r-cran-rodbc
 RUN mamba install --quiet --yes -c conda-forge \
-            'r-base>=4.2' \
+            'r-base>=4.1' \
             'r-caret' \
             'r-crayon' \
             # 'r-devtools' \
@@ -78,8 +78,8 @@ ENV RUSTUP_VERSION=1.25.1
 RUN set -eux; \
     dpkgArch="$(dpkg --print-architecture)"; \
     case "${dpkgArch##*-}" in \
-        amd64) rustArch='x86_64-unknown-linux-gnu'; rustupSha256='3dc5ef50861ee18657f9db2eeb7392f9c2a6c95c90ab41e45ab4ca71476b4338' ;; \
-        arm64) rustArch='aarch64-unknown-linux-gnu'; rustupSha256='32a1532f7cef072a667bac53f1a5542c99666c4071af0c9549795bbdb2069ec1' ;; \
+        amd64) rustArch='x86_64-unknown-linux-gnu'; rustupSha256='5cc9ffd1026e82e7fb2eec2121ad71f4b0f044e88bca39207b3f6b769aaa799c' ;; \
+        arm64) rustArch='aarch64-unknown-linux-gnu'; rustupSha256='e189948e396d47254103a49c987e7fb0e5dd8e34b200aa4481ecc4b8e41fb929' ;; \
         *) echo >&2 "unsupported architecture: ${dpkgArch}"; exit 1 ;; \
     esac; \
     url="https://static.rust-lang.org/rustup/archive/${RUSTUP_VERSION}/${rustArch}/rustup-init"; \
@@ -135,6 +135,16 @@ RUN gem install --no-document \
                 iruby \
     && iruby register --force
 
+# Install .NET5
+ENV DOTNET_ROOT=/usr/share/dotnet
+ENV DOTNET_SDK_VERSION=${DOTNET_SDK_VERSION}
+ENV PATH=/usr/share/dotnet:/root/.dotnet/tools:$PATH
+COPY --from=dotnet-sdk ${DOTNET_ROOT} ${DOTNET_ROOT}
+RUN ln -s ${DOTNET_ROOT}/dotnet /usr/bin/dotnet \
+    && dotnet help
+RUN dotnet tool install -g --add-source "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json" Microsoft.dotnet-interactive \
+    && dotnet interactive jupyter install
+
 # Install JVM languages
 ## Java
 RUN mamba install --quiet --yes -c conda-forge 'openjdk' \
@@ -172,15 +182,6 @@ RUN git clone https://github.com/filmor/ierl.git ierl \
     && cd .. \
     && rm -rf ierl
 
-# Install .NET5
-ENV DOTNET_ROOT=/usr/share/dotnet
-ENV DOTNET_SDK_VERSION=${DOTNET_SDK_VERSION}
-ENV PATH=/usr/share/dotnet:/root/.dotnet/tools:$PATH
-COPY --from=dotnet-sdk ${DOTNET_ROOT} ${DOTNET_ROOT}
-RUN ln -s ${DOTNET_ROOT}/dotnet /usr/bin/dotnet \
-    && dotnet help
-RUN dotnet tool install -g --add-source "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json" Microsoft.dotnet-interactive \
-    && dotnet interactive jupyter install
 
 # ↓ 削除系ははまとめてここでやる    
 RUN mamba clean --all \
