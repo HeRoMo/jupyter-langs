@@ -1,20 +1,25 @@
 # jupyter-langs:latest
 
-ARG GOLANG_VERSION=1.18.0
-ARG JULIA_VERSION=1.7.2
-ARG DOTNET_SDK_VERSION=6.0.201
+ARG GOLANG_VERSION=1.19.1
+ARG JULIA_VERSION=1.8.0
+ARG DOTNET_SDK_VERSION=6.0.400-1
 
 # https://hub.docker.com/_/golang
-FROM golang:${GOLANG_VERSION}-buster as golang
+FROM golang:${GOLANG_VERSION}-bullseye as golang
 # https://hub.docker.com/_/julia
-FROM julia:${JULIA_VERSION}-buster as julia
+FROM julia:${JULIA_VERSION}-bullseye as julia
+# https://hub.docker.com/_/erlang
+# https://hub.docker.com/_/elixir
+FROM elixir:1.12.3-slim as elixir
 # https://hub.docker.com/_/microsoft-dotnet-sdk
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION}-bullseye-slim as dotnet-sdk
+# https://hub.docker.com/_/openjdk
+FROM openjdk:18.0.2.1-jdk-bullseye as openjdk
 
-FROM ghcr.io/heromo/jupyter-langs/python:5.15.1
+FROM ghcr.io/heromo/jupyter-langs/python:5.16.0
 LABEL maintainer="HeRoMo"
 LABEL Description="Jupyter lab for various languages"
-LABEL Version="5.15.0"
+LABEL Version="5.16.0"
 
 # Install SPARQL
 RUN pip install sparqlkernel && \
@@ -73,13 +78,13 @@ RUN env GO111MODULE=off go get -d -u github.com/gopherdata/gophernotes \
 ENV RUSTUP_HOME=/usr/local/rustup
 ENV CARGO_HOME=/usr/local/cargo
 ENV PATH=/usr/local/cargo/bin:$PATH
-ENV RUST_VERSION=1.59.0
-ENV RUSTUP_VERSION=1.24.3
+ENV RUST_VERSION=1.64.0
+ENV RUSTUP_VERSION=1.25.1
 RUN set -eux; \
     dpkgArch="$(dpkg --print-architecture)"; \
     case "${dpkgArch##*-}" in \
-        amd64) rustArch='x86_64-unknown-linux-gnu'; rustupSha256='3dc5ef50861ee18657f9db2eeb7392f9c2a6c95c90ab41e45ab4ca71476b4338' ;; \
-        arm64) rustArch='aarch64-unknown-linux-gnu'; rustupSha256='32a1532f7cef072a667bac53f1a5542c99666c4071af0c9549795bbdb2069ec1' ;; \
+        amd64) rustArch='x86_64-unknown-linux-gnu'; rustupSha256='5cc9ffd1026e82e7fb2eec2121ad71f4b0f044e88bca39207b3f6b769aaa799c' ;; \
+        arm64) rustArch='aarch64-unknown-linux-gnu'; rustupSha256='e189948e396d47254103a49c987e7fb0e5dd8e34b200aa4481ecc4b8e41fb929' ;; \
         *) echo >&2 "unsupported architecture: ${dpkgArch}"; exit 1 ;; \
     esac; \
     url="https://static.rust-lang.org/rustup/archive/${RUSTUP_VERSION}/${rustArch}/rustup-init"; \
@@ -96,7 +101,7 @@ RUN cargo install evcxr_jupyter \
     && evcxr_jupyter --install
 
 # Install Ruby https://www.ruby-lang.org
-ENV RUBY_VERSION=3.1.1
+ENV RUBY_VERSION=3.1.2
 ENV RUBY_HOME=/opt/ruby
 RUN apt-get update -y \
     && apt-get install  -y --no-install-recommends \
@@ -135,27 +140,42 @@ RUN gem install --no-document \
                 iruby \
     && iruby register --force
 
-# Install JVM languages
-## Java
-RUN mamba install --quiet --yes -c conda-forge 'openjdk' \
-    && git clone https://github.com/SpencerPark/IJava.git && cd IJava/ \
-    && ./gradlew installKernel
-## Kotlin
-RUN mamba install --quiet --yes -c jetbrains 'kotlin-jupyter-kernel'
-## Scala 
-RUN curl -Lo coursier https://git.io/coursier-cli \
-    && chmod +x coursier \
-    && ./coursier launch --fork almond:0.11.1 -- --install \
-    && rm -f coursier
+# Install .NET6
+ENV DOTNET_ROOT=/usr/share/dotnet
+ENV DOTNET_SDK_VERSION=${DOTNET_SDK_VERSION}
+ENV PATH=/usr/share/dotnet:/root/.dotnet/tools:$PATH
+COPY --from=dotnet-sdk ${DOTNET_ROOT} ${DOTNET_ROOT}
+RUN ln -s ${DOTNET_ROOT}/dotnet /usr/bin/dotnet \
+    && dotnet help
+RUN dotnet tool install -g Microsoft.dotnet-interactive \
+    && dotnet interactive jupyter install
 
 # Install Erlang and Elixir
-RUN wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb \
-    && dpkg -i erlang-solutions_2.0_all.deb \
-    && rm -f erlang-solutions_2.0_all.deb
-RUN apt-get update; exit 0
-RUN apt-get install  -y --no-install-recommends \
-        erlang \
-        elixir=1.12.2-1 # workarond for filmor/ierl
+COPY --from=elixir /usr/local/lib/erlang /usr/local/lib/erlang
+COPY --from=elixir /usr/local/lib/elixir /usr/local/lib/elixir
+COPY --from=elixir /usr/local/bin/rebar3 /usr/local/bin/rebar3
+
+RUN runtimeDeps=' \
+		libodbc1 \
+		libssl1.1 \
+		libsctp1 \
+	' \
+	&& apt-get update \
+    && apt-get install -y --no-install-recommends $runtimeDeps
+
+RUN ln -s /usr/local/lib/erlang/bin/ct_run /usr/local/bin/ct_run \
+    && ln -s /usr/local/lib/erlang/bin/dialyzer /usr/local/bin/dialyzer \
+    && ln -s /usr/local/lib/erlang/bin/epmd /usr/local/bin/epmd \
+    && ln -s /usr/local/lib/erlang/bin/erl /usr/local/bin/erl \
+    && ln -s /usr/local/lib/erlang/bin/erlc /usr/local/bin/erlc \
+    && ln -s /usr/local/lib/erlang/bin/escript /usr/local/bin/escript \
+    && ln -s /usr/local/lib/erlang/bin/run_erl /usr/local/bin/run_erl \
+    && ln -s /usr/local/lib/erlang/bin/to_erl /usr/local/bin/to_erl \
+    && ln -s /usr/local/lib/erlang/bin/typer /usr/local/bin/typer \
+    && ln -s /usr/local/lib/elixir/bin/elixir /usr/local/bin/elixir \
+    && ln -s /usr/local/lib/elixir/bin/elixirc /usr/local/bin/elixirc \
+    && ln -s /usr/local/lib/elixir/bin/iex /usr/local/bin/iex \
+    && ln -s /usr/local/lib/elixir/bin/mix /usr/local/bin/mix
 RUN mix local.hex --force \
     && mix local.rebar --force
 RUN git clone https://github.com/filmor/ierl.git ierl \
@@ -172,19 +192,29 @@ RUN git clone https://github.com/filmor/ierl.git ierl \
     && cd .. \
     && rm -rf ierl
 
-# Install .NET5
-ENV DOTNET_ROOT=/usr/share/dotnet
-ENV DOTNET_SDK_VERSION=${DOTNET_SDK_VERSION}
-ENV PATH=/usr/share/dotnet:/root/.dotnet/tools:$PATH
-COPY --from=dotnet-sdk ${DOTNET_ROOT} ${DOTNET_ROOT}
-RUN ln -s ${DOTNET_ROOT}/dotnet /usr/bin/dotnet \
-    && dotnet help
-RUN dotnet tool install -g --add-source "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json" Microsoft.dotnet-interactive \
-    && dotnet interactive jupyter install
+# Install JVM languages
+## Java
+# https://github.com/allen-ball/ganymede
+ENV JAVA_HOME /usr/local/openjdk-18
+ENV PATH $JAVA_HOME/bin:$PATH
+ENV GANYMEDE_VERSION=2.0.1.20220723
+COPY --from=openjdk ${JAVA_HOME} ${JAVA_HOME}
+RUN wget https://github.com/allen-ball/ganymede/releases/download/v${GANYMEDE_VERSION}/ganymede-${GANYMEDE_VERSION}.jar -O /tmp/ganymede.jar
+RUN ${JAVA_HOME}/bin/java \
+      -jar /tmp/ganymede.jar  \
+      -i --sys-prefix --copy-jar=true
+## Kotlin
+RUN mamba install --quiet --yes -c jetbrains 'kotlin-jupyter-kernel'
+## Scala 
+RUN curl -Lo coursier https://git.io/coursier-cli \
+    && chmod +x coursier \
+    && ./coursier launch --fork almond -- --install \
+    && rm -f coursier
 
-# ↓ 削除系ははまとめてここでやる    
+# ↓ 削除系ははまとめてここでやる
 RUN mamba clean --all \
     && apt-get autoremove \
     && apt-get clean \
     && apt-get autoclean \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /tmp/*
