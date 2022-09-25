@@ -13,6 +13,8 @@ FROM julia:${JULIA_VERSION}-bullseye as julia
 FROM elixir:1.12.3-slim as elixir
 # https://hub.docker.com/_/microsoft-dotnet-sdk
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION}-bullseye-slim as dotnet-sdk
+# https://hub.docker.com/_/openjdk
+FROM openjdk:18.0.2.1-jdk-bullseye as openjdk
 
 FROM ghcr.io/heromo/jupyter-langs/python:5.16.0
 LABEL maintainer="HeRoMo"
@@ -138,14 +140,14 @@ RUN gem install --no-document \
                 iruby \
     && iruby register --force
 
-# Install .NET5
+# Install .NET6
 ENV DOTNET_ROOT=/usr/share/dotnet
 ENV DOTNET_SDK_VERSION=${DOTNET_SDK_VERSION}
 ENV PATH=/usr/share/dotnet:/root/.dotnet/tools:$PATH
 COPY --from=dotnet-sdk ${DOTNET_ROOT} ${DOTNET_ROOT}
 RUN ln -s ${DOTNET_ROOT}/dotnet /usr/bin/dotnet \
     && dotnet help
-RUN dotnet tool install -g --add-source "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json" Microsoft.dotnet-interactive \
+RUN dotnet tool install -g Microsoft.dotnet-interactive \
     && dotnet interactive jupyter install
 
 # Install Erlang and Elixir
@@ -190,22 +192,29 @@ RUN git clone https://github.com/filmor/ierl.git ierl \
     && cd .. \
     && rm -rf ierl
 
-# # Install JVM languages
-# ## Java
-# RUN mamba install --quiet --yes -c conda-forge 'openjdk' \
-#     && git clone https://github.com/SpencerPark/IJava.git && cd IJava/ \
-#     && ./gradlew installKernel
-# ## Kotlin
-# RUN mamba install --quiet --yes -c jetbrains 'kotlin-jupyter-kernel'
-# ## Scala 
-# RUN curl -Lo coursier https://git.io/coursier-cli \
-#     && chmod +x coursier \
-#     && ./coursier launch --fork almond:0.11.1 -- --install \
-#     && rm -f coursier
+# Install JVM languages
+## Java
+# https://github.com/allen-ball/ganymede
+ENV JAVA_HOME /usr/local/openjdk-18
+ENV PATH $JAVA_HOME/bin:$PATH
+ENV GANYMEDE_VERSION=2.0.1.20220723
+COPY --from=openjdk ${JAVA_HOME} ${JAVA_HOME}
+RUN wget https://github.com/allen-ball/ganymede/releases/download/v${GANYMEDE_VERSION}/ganymede-${GANYMEDE_VERSION}.jar -O /tmp/ganymede.jar
+RUN ${JAVA_HOME}/bin/java \
+      -jar /tmp/ganymede.jar  \
+      -i --sys-prefix --copy-jar=true
+## Kotlin
+RUN mamba install --quiet --yes -c jetbrains 'kotlin-jupyter-kernel'
+## Scala 
+RUN curl -Lo coursier https://git.io/coursier-cli \
+    && chmod +x coursier \
+    && ./coursier launch --fork almond -- --install \
+    && rm -f coursier
 
-# ↓ 削除系ははまとめてここでやる    
+# ↓ 削除系ははまとめてここでやる
 RUN mamba clean --all \
     && apt-get autoremove \
     && apt-get clean \
     && apt-get autoclean \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /tmp/*
