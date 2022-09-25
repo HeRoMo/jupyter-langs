@@ -78,7 +78,7 @@ RUN env GO111MODULE=off go get -d -u github.com/gopherdata/gophernotes \
 ENV RUSTUP_HOME=/usr/local/rustup
 ENV CARGO_HOME=/usr/local/cargo
 ENV PATH=/usr/local/cargo/bin:$PATH
-ENV RUST_VERSION=1.63.0
+ENV RUST_VERSION=1.64.0
 ENV RUSTUP_VERSION=1.25.1
 RUN set -eux; \
     dpkgArch="$(dpkg --print-architecture)"; \
