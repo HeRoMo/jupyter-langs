@@ -1,8 +1,8 @@
 # jupyter-langs:latest
 
 ARG GOLANG_VERSION=1.19.1
-ARG JULIA_VERSION=1.8.0
-ARG DOTNET_SDK_VERSION=6.0.400-1
+ARG JULIA_VERSION=1.8.2
+ARG DOTNET_SDK_VERSION=6.0.401
 
 # https://hub.docker.com/_/golang
 FROM golang:${GOLANG_VERSION}-bullseye as golang
@@ -16,10 +16,10 @@ FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION}-bullseye-slim as dotnet-
 # https://hub.docker.com/_/openjdk
 FROM openjdk:18.0.2.1-jdk-bullseye as openjdk
 
-FROM ghcr.io/heromo/jupyter-langs/python:5.16.0
+FROM ghcr.io/heromo/jupyter-langs/python:5.17.0
 LABEL maintainer="HeRoMo"
 LABEL Description="Jupyter lab for various languages"
-LABEL Version="5.16.0"
+LABEL Version="5.17.0"
 
 # Install SPARQL
 RUN pip install sparqlkernel && \
@@ -62,15 +62,15 @@ RUN julia -e 'using Pkg; Pkg.add("IJulia"); Pkg.add("DataFrames"); Pkg.add("CSV"
 
 # Install golang
 ENV GOLANG_VERSION=${GOLANG_VERSION}
+# https://github.com/gopherdata/gophernotes/releases
+ENV GOPHERNOTES_VERSION=0.7.5 
 ENV GOPATH=/go
 ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
 COPY --from=golang /usr/local/go/ /usr/local/go/
-RUN env GO111MODULE=off go get -d -u github.com/gopherdata/gophernotes \
-    && cd "$(go env GOPATH)"/src/github.com/gopherdata/gophernotes \
-    && env GO111MODULE=on go install \
-    && mkdir -p $HOME/.local/share/jupyter/kernels/gophernotes \
-    && cp kernel/* $HOME/.local/share/jupyter/kernels/gophernotes \
-    && cd $HOME/.local/share/jupyter/kernels/gophernotes \
+RUN go install github.com/gopherdata/gophernotes@v${GOPHERNOTES_VERSION} \
+    && mkdir -p ~/.local/share/jupyter/kernels/gophernotes \
+    && cd ~/.local/share/jupyter/kernels/gophernotes \
+    && cp "$(go env GOPATH)"/pkg/mod/github.com/gopherdata/gophernotes@v${GOPHERNOTES_VERSION}/kernel/*  "." \
     && chmod +w ./kernel.json \
     && sed "s|gophernotes|$(go env GOPATH)/bin/gophernotes|" < kernel.json.in > kernel.json
 
@@ -202,7 +202,7 @@ COPY --from=openjdk ${JAVA_HOME} ${JAVA_HOME}
 RUN wget https://github.com/allen-ball/ganymede/releases/download/v${GANYMEDE_VERSION}/ganymede-${GANYMEDE_VERSION}.jar -O /tmp/ganymede.jar
 RUN ${JAVA_HOME}/bin/java \
       -jar /tmp/ganymede.jar  \
-      -i --sys-prefix --copy-jar=true
+      -i --sys-prefix --id=java --display-name=Java18 --copy-jar=true
 ## Kotlin
 RUN mamba install --quiet --yes -c jetbrains 'kotlin-jupyter-kernel'
 ## Scala 
