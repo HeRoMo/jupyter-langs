@@ -3,6 +3,8 @@
 ARG GOLANG_VERSION=1.19.1
 ARG JULIA_VERSION=1.8.2
 ARG DOTNET_SDK_VERSION=6.0.401
+ARG ELIXIR_VERSION=1.12.3
+ARG JAVA_VERSION=18.0.2.1
 
 # https://hub.docker.com/_/golang
 FROM golang:${GOLANG_VERSION}-bullseye as golang
@@ -10,11 +12,11 @@ FROM golang:${GOLANG_VERSION}-bullseye as golang
 FROM julia:${JULIA_VERSION}-bullseye as julia
 # https://hub.docker.com/_/erlang
 # https://hub.docker.com/_/elixir
-FROM elixir:1.12.3-slim as elixir
+FROM elixir:${ELIXIR_VERSION}-slim as elixir
 # https://hub.docker.com/_/microsoft-dotnet-sdk
 FROM mcr.microsoft.com/dotnet/sdk:${DOTNET_SDK_VERSION}-bullseye-slim as dotnet-sdk
 # https://hub.docker.com/_/openjdk
-FROM openjdk:18.0.2.1-jdk-bullseye as openjdk
+FROM openjdk:${JAVA_VERSION}-jdk-bullseye as openjdk
 
 FROM ghcr.io/heromo/jupyter-langs/python:5.17.0
 LABEL maintainer="HeRoMo"
